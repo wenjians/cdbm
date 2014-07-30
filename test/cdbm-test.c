@@ -6,7 +6,9 @@
 #include "return_codes.h"
 #include "vunit.h"
 
+#include "gfi-list.h"
 #include "cdbm-lib.h"
+#include "cdbm-db.h"
 
 
 /***************************************************************************
@@ -29,6 +31,14 @@ VTestCase cdbm_test_cases[] = {
 
 int main()
 {
+    /* init phase 1 */
+    gfi_list_mgr_init(1);
+    cdbm_lib_init(1);
+
+    /* init phase 2 */
+    gfi_list_mgr_init(2);
+    cdbm_lib_init(2);
+    
     runAll();
 
     return 0;
@@ -40,18 +50,33 @@ int main()
 
 static int cdbm_test_transaction() 
 {
-    T_cdbm_trans_id trans_id;
+    T_cdbm_trans_id trans_id_1, trans_id_2;
     T_global_rc ret_cod;
 
     // a typical unit test include 4 steps.
     // 1. Setup
+    VASSERT_TRUE(gfi_list_is_empty(g_cdbm_db.trans_list));
     
     // 2. Execute
-    trans_id = cdbm_create_transaction("test_trans");
-    VASSERT_TRUE(trans_id!=NULL);
+    trans_id_1 = cdbm_create_transaction("test_trans_test1");
+    VASSERT_TRUE(trans_id_1!=NULL);
+    VASSERT_EQ(1, gfi_list_size(g_cdbm_db.trans_list));
 
-    ret_cod = cdbm_close_transaction(trans_id);
+    trans_id_2 = cdbm_create_transaction("test_trans_test2");
+    VASSERT_TRUE(trans_id_2!=NULL);
+    VASSERT_EQ(2, gfi_list_size(g_cdbm_db.trans_list));
+
+    ret_cod = cdbm_close_transaction(trans_id_1);
     VASSERT_EQ(RC_OK, ret_cod);
+    VASSERT_EQ(1, gfi_list_size(g_cdbm_db.trans_list));
+
+    ret_cod = cdbm_close_transaction(trans_id_1);
+    VASSERT_EQ(RC_CDBM_TRANS_NOT_IN_LIST, ret_cod);
+    VASSERT_EQ(1, gfi_list_size(g_cdbm_db.trans_list));
+
+    ret_cod = cdbm_close_transaction(trans_id_2);
+    VASSERT_EQ(RC_OK, ret_cod);
+    VASSERT_TRUE(gfi_list_is_empty(g_cdbm_db.trans_list));
 
     // 3. Verify
 
@@ -82,7 +107,7 @@ static int cdbm_test_set_value()
 
     ret_cod = cdbm_set_string(trans_id, "local", "/syslog/save-mode");
     VASSERT_EQ(RC_OK, ret_cod);
-    
+
     ret_cod = cdbm_set_uint32(trans_id, 10, "/syslog/speed-uint");
     VASSERT_EQ(RC_OK, ret_cod);
 

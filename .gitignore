@@ -24,4 +24,4 @@
 /Debug/
 
 *.prefs
-object/cdbm
+cdbm

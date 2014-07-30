@@ -1,13 +1,16 @@
 #ifndef CDBM_LIB_H
 #define CDBM_LIB_H
 
-
+#include "aat-incl.h"
+#include "return_codes.h"
 #include "gfi-print-buffer.h"
-//#include ""
+#include "gfi-list.h"
 
 typedef struct T_cdbm_trans {
+    T_gfi_list   list_node;   // all the transaction items will be in one list
 
-    //char *plain_config_string;
+
+    T_gfi_print_buffer_id xml_config;
     T_gfi_print_buffer_id plain_config;
 }T_cdbm_trans;
 
@@ -30,7 +33,7 @@ T_global_rc cdbm_set_string(T_cdbm_trans_id cdbm_id, const char *val, const char
 /***************************************************************************
  *  CDBM transaction related function
  */
-
+void cdbm_trans_init();
 T_cdbm_trans_id cdbm_create_transaction(char* trans_name);
 T_global_rc cdbm_close_transaction(T_cdbm_trans_id cdbm_trans);
 

@@ -4,6 +4,8 @@
 
 #include "aat-types.h"
 #include "aat-assert.h"
+#include "gfi-cpu-al.h"
+
 #include "stdio.h"
 
 #ifdef LINUX_MT
@@ -30,5 +32,9 @@ Oooooooooooooooops
 
 #endif
 
+
+#ifndef NULL
+#define NULL   ((void *) 0)
+#endif
 
 #endif /* AAT_INCL_H */

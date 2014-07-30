@@ -1,24 +1,5 @@
-/*******************************************************************************
-**                                                                            **
-**                             ALCATEL LUCENT TELECOM                         **
-**                                                                            **
-*******************************************************************************/
-
-/*************************** COPYRIGHT INFORMATION *****************************
-**                                                                            **
-**     This program contains proprietary information which is a trade         **
-**     secret of ALCATEL TELECOM and also is protected as an unpublished      **
-**     work under applicable Copyright laws. Recipient is to retain this      **
-**     program in confidence and is not permitted to use or make copies       **
-**     thereof other than as permitted in a written agreement with            **
-**     ALCATEL TELECOM.                                                       **
-**                                                                            **
-*******************************************************************************/
 
 /*******************************************************************************
-** Author(s)     : Yuan Yongquan
-**
-** Creation Date : 12.11.2013
 **
 ** Description   : this file manage all test case and provide UIs to run it.
 **                 

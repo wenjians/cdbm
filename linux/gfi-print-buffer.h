@@ -1,31 +1,5 @@
-/*******************************************************************************
-**                                                                            **
-**                             ALCATEL LUCENT TELECOM                         **
-**                                                                            **
-*******************************************************************************/
-
-/*************************** COPYRIGHT INFORMATION *****************************
-**                                                                            **
-**     This program contains proprietary information which is a trade         **
-**     secret of ALCATEL TELECOM and also is protected as an unpublished      **
-**     work under applicable Copyright laws. Recipient is to retain this      **
-**     program in confidence and is not permitted to use or make copies       **
-**     thereof other than as permitted in a written agreement with            **
-**     ALCATEL TELECOM.                                                       **
-**                                                                            **
-*******************************************************************************/
 
 /*******************************************************************************
-**
-** Project       : A7510 R3.x
-**
-** Module        : vm-gfi-libs
-**
-** File name     : gfi-print-buffer.h
-**
-** Author(s)     : Sun Wenjian
-**
-** Creation Date : 2010.07.20
 **
 ** Description   : this file is for the GFI print buffer
 **                 some times, application have many output to be done, e.g.
@@ -41,13 +15,6 @@
 **                 size, which is defined when create
 **
 ** Reference(s)  : TLD document (e.g. )
-**
-******************************************************************************
-**
-** History
-**
-** Date         By                  Comment
-** 2010.07.20   Sun Wenjian         creation
 **
 *****************************************************************************/
 
