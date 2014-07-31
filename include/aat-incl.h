@@ -5,13 +5,15 @@
 #include "aat-types.h"
 #include "aat-assert.h"
 #include "gfi-cpu-al.h"
+#include "gfi-misc.h"
 
-#include "stdio.h"
 
 #ifdef LINUX_MT
+#include <stdio.h>
 #include <string.h>
 #include <malloc.h>
 #include <stdarg.h>
+#include <ctype.h>
 //#include <linux/compiler.h>
 #include <stdlib.h>
 

@@ -382,6 +382,9 @@ uint32 gfi_print_buf_it_read_line(T_gfi_print_buffer_iterator* node_it,
      * will failure, add check in gfi_lock, because make sure GFI
      * print buffer operation are atomic
      */
+    GFI_PRINT_BUF_DEBUG(("gfi_print_buf_it_read_line: read=%u, write=%u\n",
+            node_it->cur_read_off, print_buffer->write_offset));
+
     if (node_it->cur_read_off >= print_buffer->write_offset)
         return 0;
 

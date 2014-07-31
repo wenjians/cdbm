@@ -1,5 +1,6 @@
 
 #include "aat-incl.h"
+#include "return_codes.h"
 
 #include <string.h>
 #include <arpa/inet.h>
@@ -58,68 +59,65 @@ char* snprintIpnga(char *buf, uint32 len, const T_global_IPNG_ADDR *ipng_addr)
 } /* snprintIpnga */
 
 
-#if 0
-uint32 ip4_is_valid_addr(const char *strptr)
+T_global_rc ip4_get_addr_from_str(const char *buf, T_global_IP_ADDR *ip4_addr)
 {
-    int result = ;
+    AAT_STD_ASSERT(buf != NULL);
+    AAT_STD_ASSERT(ip4_addr != NULL);
 
-    /*
-    inet_pton() returns 1 on success (network address was successfully converted).  0 is returned if  src  does  not
-    contain a character string representing a valid network address in the specified address family.  If af does not
-    contain a valid address family, -1 is returned and errno is set to EAFNOSUPPORT.
-    */
+    if (inet_pton(AF_INET, buf, ip4_addr) != 1)
+        return RC_FAILED;
 
-    return TRUE;
+    return RC_OK;
 }
 
-
-uint32 ip6_is_valid_addr(const char *strptr)
+T_global_rc ip6_get_addr_from_str(const char *buf, T_global_IP6_ADDR *ip6_addr)
 {
+    AAT_STD_ASSERT(buf != NULL);
+    AAT_STD_ASSERT(ip6_addr != NULL);
 
+    if (inet_pton(AF_INET6, buf, ip6_addr)!= 1)
+        return RC_FAILED;
+
+    return RC_OK;
 }
 
-uint32 ipng_is_valid_addr(const char *strptr)
+
+T_global_rc ipng_get_addr_from_str(const char *buf, T_global_IPNG_ADDR *ipng_addr)
 {
-    return (ip6_is_valid_addr(strptr) || ip4_is_valid_addr(strptr));
+    AAT_STD_ASSERT(buf != NULL);
+    AAT_STD_ASSERT(ipng_addr != NULL);
+
+    /* it is IPv6 address */
+    if (inet_pton(AF_INET6, buf, &(ipng_addr->ipng_ip6)) == 1)
+    {
+        ipng_addr->ipVer = IP_VERSION_6;
+
+        return RC_OK;
+    }
+
+    /* it is IPv4 address */
+    if (inet_pton(AF_INET, buf, &(ipng_addr->ipng_ip4)) == 1)
+    {
+        ipng_addr->ipVer = IP_VERSION_4;
+
+        return RC_OK;;
+    }
+
+    return RC_FAILED;
 }
 
 
+uint32 IPNG_ADDR_EQUAL(T_global_IPNG_ADDR addr1, T_global_IPNG_ADDR addr2)
+{
+    if (addr1.ipVer != addr2.ipVer)
+        return 0;
 
- int
- main(int argc, char *argv[])
- {
-     unsigned char buf[sizeof(struct in6_addr)];
-     int domain, s;
-     char str[INET6_ADDRSTRLEN];
+    if (addr1.ipVer == IP_VERSION_4)
+        return IP4_ADDR_EQUAL(addr1.ipng_ip4, addr2.ipng_ip4);
 
-     if (argc != 3) {
-         fprintf(stderr, "Usage: %s {i4|i6|<num>} string\n", argv[0]);
-         exit(EXIT_FAILURE);
-     }
+    else if (addr1.ipVer == IP_VERSION_6)
+        return IP6_ADDR_EQUAL(addr1.ipng_ip6, addr2.ipng_ip6);
 
-     domain = (strcmp(argv[1], "i4") == 0) ? AF_INET :
-              (strcmp(argv[1], "i6") == 0) ? AF_INET6 : atoi(argv[1]);
-
-     s = inet_pton(domain, argv[2], buf);
-
-
-     if (s <= 0) {
-         if (s == 0)
-            fprintf(stderr, "Not in presentation format");
-         else
-             perror("inet_pton");
-         exit(EXIT_FAILURE);
-     }
-
-     if (inet_ntop(domain, buf, str, INET6_ADDRSTRLEN) == NULL) {
-        perror("inet_ntop");
-        exit(EXIT_FAILURE);
-     }
-
-     printf("%s\n", str);
-
-     exit(EXIT_SUCCESS);
+    return 0;  // failure case
 }
-
-#endif
 

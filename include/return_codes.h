@@ -11,6 +11,13 @@ typedef enum T_global_rc {
 
     /* the follwoing is the error code for CDBM */
     RC_CDBM_TRANS_NOT_IN_LIST  = -11000,
+    RC_CDBM_NAME_SPACE_INVALID = -11001,
+    RC_CDBM_INVALID_IPV4_ADDR  = -11002,
+    RC_CDBM_INVALID_IPV6_ADDR  = -11003,
+    RC_CDBM_INVALID_IP_ADDR    = -11004,
+    RC_CDBM_KEYPATH_NOT_MATCH  = -11005,
+    RC_CDBM_READ_EMPTY         = -11006,
+    RC_CDBM_SET_CONF_STR_FAIL  = -11007,
 } T_global_rc;
 
 #endif /* CDBM_RET_CODE_H */

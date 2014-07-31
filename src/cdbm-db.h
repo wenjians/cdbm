@@ -21,7 +21,22 @@ typedef struct T_cdbm_db_data
 extern T_cdbm_db_data g_cdbm_db;
 
 
+#if 0
+/* it is definition of CDBM configuration paraemter model */
+typedef enum T_cdbm_cm_node_type
+{
+    CDBM_NODE_TYPE_INVALID      = 0,
+    CDBM_NODE_TYPE_CONTAINER    = 1,
+    CDBM_NODE_TYPE_LIST         = 2,
+    CDBM_NODE_TYPE_LEAF_LIST    = 3,
+    CDBM_NODE_TYPE_LEAF         = 4
+} T_cdbm_cm_node_type;
 
+typedef struct T_cdbm_cm_node
+{
+    T_cdbm_cm_node_type node_type;
+};
+#endif
 
 void cdbm_lib_init(int phase);
 
