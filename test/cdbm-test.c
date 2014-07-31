@@ -305,27 +305,27 @@ static int cdbm_test_mo_group()
     ipv4_addr.S_ip_b.s_b2 = 10;
     ipv4_addr.S_ip_b.s_b3 = 0;
     ipv4_addr.S_ip_b.s_b4 = 4;
-    VASSERT_EQ(ipv4_addr.S_addr, g_test_config.pri_ip.S_addr);
+    VASSERT_TRUE(ip4_is_addr_equal(ipv4_addr, g_test_config.pri_ip));
 
     memset(&ipv6_addr, 0, sizeof(ipv6_addr));
     ipv6_addr.in6.addr8[0] = 0xff;
     ipv6_addr.in6.addr8[1] = 0x02;
     ipv6_addr.in6.addr8[15] = 0x1;
-    VASSERT_TRUE(IP6_ADDR_EQUAL(ipv6_addr, g_test_config.sec_ip));
+    VASSERT_TRUE(ip6_is_addr_equal(&ipv6_addr, &g_test_config.sec_ip));
 
     ipng_addr.ipVer = IP_VERSION_4;
     ipng_addr.ipng_ip4.S_ip_b.s_b1 = 10;
     ipng_addr.ipng_ip4.S_ip_b.s_b2 = 10;
     ipng_addr.ipng_ip4.S_ip_b.s_b3 = 0;
     ipng_addr.ipng_ip4.S_ip_b.s_b4 = 6;
-    VASSERT_TRUE(IPNG_ADDR_EQUAL(ipng_addr, g_test_config.ipng_v4));
+    VASSERT_TRUE(ipng_is_addr_equal(&ipng_addr, &g_test_config.ipng_v4));
 
     memset(&ipng_addr, 0, sizeof(ipng_addr));
     ipng_addr.ipVer = IP_VERSION_6;
     ipng_addr.ipng_ip6.in6.addr8[0] = 0xff;
     ipng_addr.ipng_ip6.in6.addr8[1] = 0x02;
     ipng_addr.ipng_ip6.in6.addr8[15] = 0x6;
-    VASSERT_TRUE(IPNG_ADDR_EQUAL(ipng_addr, g_test_config.ipng_v6));
+    VASSERT_TRUE(ipng_is_addr_equal(&ipng_addr, &g_test_config.ipng_v6));
 
     VASSERT_EQ_STR("aa:bb:cc:dd:ee:ff", g_test_config.local_mac);
 

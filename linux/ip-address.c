@@ -107,16 +107,16 @@ T_global_rc ipng_get_addr_from_str(const char *buf, T_global_IPNG_ADDR *ipng_add
 }
 
 
-uint32 IPNG_ADDR_EQUAL(T_global_IPNG_ADDR addr1, T_global_IPNG_ADDR addr2)
+uint32 ipng_is_addr_equal(T_global_IPNG_ADDR *addr1, T_global_IPNG_ADDR *addr2)
 {
-    if (addr1.ipVer != addr2.ipVer)
+    if (addr1->ipVer != addr2->ipVer)
         return 0;
 
-    if (addr1.ipVer == IP_VERSION_4)
-        return IP4_ADDR_EQUAL(addr1.ipng_ip4, addr2.ipng_ip4);
+    if (addr1->ipVer == IP_VERSION_4)
+        return ip4_is_addr_equal(addr1->ipng_ip4, addr2->ipng_ip4);
 
-    else if (addr1.ipVer == IP_VERSION_6)
-        return IP6_ADDR_EQUAL(addr1.ipng_ip6, addr2.ipng_ip6);
+    else if (addr1->ipVer == IP_VERSION_6)
+        return ip6_is_addr_equal(&addr1->ipng_ip6, &addr2->ipng_ip6);
 
     return 0;  // failure case
 }

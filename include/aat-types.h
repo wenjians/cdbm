@@ -44,7 +44,7 @@ typedef union
 
 } T_global_IP_ADDR;
 
-#define IP4_ADDR_EQUAL(addr1, addr2) (addr1.S_addr == addr2.S_addr)
+#define ip4_is_addr_equal(addr1, addr2)     (addr1.S_addr == addr2.S_addr)
 
 
 /* the following is IP address for IPv6 */
@@ -66,8 +66,8 @@ typedef union {
 } T_global_IP6_ADDR;
 
 
-#define IP6_ADDR_EQUAL(addr1, addr2) \
-    (memcmp(&addr1, &addr2, sizeof(T_global_IP6_ADDR)) == 0)
+#define ip6_is_addr_equal(addr1, addr2) \
+    (memcmp(addr1, addr2, sizeof(T_global_IP6_ADDR)) == 0)
 
 /* the following is IP address for IPv4 and IPv6
  * IP NG = IP next generarion, it is for the next generation
@@ -87,7 +87,7 @@ typedef struct {
 
 } T_global_IPNG_ADDR;
 
-uint32 IPNG_ADDR_EQUAL(T_global_IPNG_ADDR addr1, T_global_IPNG_ADDR addr2);
+uint32 ipng_is_addr_equal(T_global_IPNG_ADDR *addr1, T_global_IPNG_ADDR *addr2);
 
 char* snprintIp4a(char *buf, uint32 len, const T_global_IP_ADDR *ip4_addr);
 char* snprintIp6a(char *buf, uint32 len, const T_global_IP6_ADDR *ip6_addr);
