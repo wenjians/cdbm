@@ -14,6 +14,9 @@ typedef signed char int8;
 typedef unsigned char uchar8;
 typedef signed char char8;
 
+typedef enum bool {false = (0 == 1), true = (0 == 0)} bool;
+
+
 /*****************************************************************************
  * the follwoing is IP related definition
  ****************************************************************************/
