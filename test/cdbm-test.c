@@ -9,6 +9,7 @@
 #include "gfi-list.h"
 #include "cdbm-lib.h"
 #include "cdbm-db.h"
+#include "cdbm-types.h"
 
 #include "cdbm-test-client.h"
 
@@ -17,12 +18,16 @@
  **************************************************************************/
 int main();
 
+extern T_cdbm_cm_typedef cdbm_test_cm_typedef[];
+extern T_cdbm_cm_node cdbm_test_cm_node[] ;
+
 static int cdbm_test_misc_lib();
 static int cdbm_test_transaction();
 static int cdbm_test_set_value() ;
 static int cdbm_test_mo_leaf();
 static int cdbm_test_mo_group();
-
+static int cdbm_test_cm_hash_search();
+T_global_rc cdbm_cm_test_printall();
 
 VTestCase cdbm_test_cases[] = {
     DEF_TEST_CASE(cdbm_test_misc_lib),
@@ -30,6 +35,7 @@ VTestCase cdbm_test_cases[] = {
     DEF_TEST_CASE(cdbm_test_set_value),
     DEF_TEST_CASE(cdbm_test_mo_leaf),
     DEF_TEST_CASE(cdbm_test_mo_group),
+    DEF_TEST_CASE(cdbm_test_cm_hash_search),
 
 
     // add one line before here for every test case
@@ -48,6 +54,12 @@ int main()
     gfi_list_mgr_init(2);
     cdbm_lib_init(2);
     
+    cdbm_cm_attach_data(cdbm_test_cm_node, cdbm_test_cm_typedef);
+    cdbm_cm_init();
+
+    cdbm_test_print_size();
+
+    //cdbm_cm_test_printall();
     runAll();
 
     return 0;
@@ -56,6 +68,54 @@ int main()
 /***************************************************************************
  * test case definitions
  **************************************************************************/
+uint32 prefix_space_cnt=0;
+T_global_rc cdbm_test_print_node(T_cdbm_cm_node* cm_node)
+{
+    int space;
+    char fmt[80];
+
+    for (space=0; space<prefix_space_cnt; space++) {
+        printf(" ");
+    }
+
+    snprintf(fmt, 80, "%%%d      %%s", 40-prefix_space_cnt);
+
+    printf(fmt, cm_node->key_name, cm_node->key_path);
+    return RC_OK;
+}
+
+T_global_rc cdbm_test_print_enter_container(T_cdbm_cm_node* cur_node)
+{
+    prefix_space_cnt+=4;
+    cdbm_test_print_node(cur_node);
+
+    return RC_OK;
+}
+
+T_global_rc cdbm_test_print_exit_container(T_cdbm_cm_node* cm_node)
+{
+    prefix_space_cnt -= 4;
+
+    return RC_OK;
+}
+
+T_global_rc cdbm_cm_test_printall()
+{
+    T_cdbm_cm_node_ops node_ops = {
+        cdbm_test_print_enter_container,
+        cdbm_test_print_exit_container,
+        cdbm_test_print_enter_container,
+        cdbm_test_print_exit_container,
+        cdbm_test_print_node,
+        NULL,
+        cdbm_test_print_node,
+        NULL
+    };
+
+    cdbm_cm_node_walk(&node_ops);
+
+    return RC_OK;
+}
 
 static int cdbm_test_misc_lib()
 {
@@ -332,6 +392,27 @@ static int cdbm_test_mo_group()
     // 4. Teardown
     ret_cod = cdbm_close_transaction(trans_id);
     VASSERT_EQ(RC_OK, ret_cod);
+
+    return 0;
+}
+
+static int cdbm_test_cm_hash_search()
+{
+    T_cdbm_cm_node *cm_node;
+    cm_node = cdbm_cm_get_node_from_keypath("/");
+    VASSERT_TRUE(cdbm_cm_is_root(cm_node));
+
+    cm_node = cdbm_cm_get_node_from_keypath("/ip-realm/realm-table/ip-if");
+    VASSERT_TRUE(cmbm_cm_is_list(cm_node));
+
+    cm_node = cdbm_cm_get_node_from_keypath("/ip-realm/realm-table/vmg-id");
+    VASSERT_TRUE(cmbm_cm_is_leaf_list(cm_node));
+
+    cm_node = cdbm_cm_get_node_from_keypath("/ip-realm/realm-table/cp-monitoring/admin-state");
+    VASSERT_TRUE(cmbm_cm_is_leaf(cm_node));
+
+    cm_node = cdbm_cm_get_node_from_keypath("/test");
+    VASSERT_TRUE(cm_node==NULL);
 
     return 0;
 }

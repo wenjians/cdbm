@@ -27,7 +27,7 @@ typedef enum bool {false = (0 == 1), true = (0 == 0)} bool;
 #define IPNG_PREFIX_STRING_LENGTH   (39+1+3+1)
 /* the maximum of Mac string address is 17, plus 1 '\0' */
 /* e.g. 00-00-00-00-00-00                               */
-#define IPNG_MAC_STRING_LENGTH      (17+1)
+#define MAC_STRING_LENGTH           (17+1)
 
 
 

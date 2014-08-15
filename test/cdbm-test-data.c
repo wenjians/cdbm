@@ -8,9 +8,10 @@
  */
 
 #include "aat-incl.h"
+
 #include "cdbm-lib.h"
 #include "cdbm-db.h"
-
+#include "cdbm-config-model.h"
 
 
 /**************************************************************************************************
@@ -19,7 +20,7 @@
 
 T_cdbm_type_enum_value test_enum_type_def_1[] = {{"enable", 1, 1}, {"disable", 1, 0}};
 
-T_cdbm_cm_typedef test_cm_typedef[] = {
+T_cdbm_cm_typedef cdbm_test_cm_typedef[] = {
     /*name          builtin defalt   union.type       */
     /*  derived:    typedef_idx     range,      pattern_count,   pattern_list */
     {"uint32",      1,      NULL,   .type.builtin = CDBM_TYPE_UINT32},  /* 0 */
@@ -58,7 +59,10 @@ T_cdbm_cm_typedef test_cm_typedef[] = {
 
 };
 
-
+uint32 cdbm_test_get_sizeof_typedef()
+{
+    return sizeof(cdbm_test_cm_typedef);
+}
 
 /**************************************************************************************************
  ******            the following is type declaration which is used for leaf/leaf_list     *********
@@ -103,35 +107,42 @@ T_cdbm_cm_type test_cm_type_35 = { 0, CDBM_TYPE_UINT32,      .type.t_int  = {"0.
  ******               the following is CDBM configuration parameter model                    ******
  *************************************************************************************************/
 
-T_cdbm_cm_node test_cm_root[] = {
+T_cdbm_cm_node cdbm_test_cm_node[] = {
     /* node type                config, name,           parent  child,  sibling must,       xpath */
     /*  leaf:   default, mandatory, type    */
-    {CDBM_NODE_TYPE_CONTAINER,  false,  NULL,           -1,     1,      -1,     NULL,       NULL,
-        .node.container = {0}
-    }, /* 0 */
+    {CDBM_NODE_TYPE_CONTAINER,  false,  NULL,           -1,     1,      -1,     NULL,       "/",
+        .node.container = {0} /*,
+        .hh = {NULL}*/
+    }, /* 0 : reserved for root */
     
-    {CDBM_NODE_TYPE_CONTAINER,  true,   "test-types",   0,      1,      13,     NULL,       "/test-types",
-        .node.container = {0}
+    {CDBM_NODE_TYPE_CONTAINER,  true,   "test-types",   0,      2,      13,     NULL,       "/test-types",
+        .node.container = {0} /*,
+        .hh = {NULL} */
     }, /* 1 */
 
     {CDBM_NODE_TYPE_LEAF,       true,   "save-mode",    1,      -1,     3,      NULL,       "/test-types/save-mode",
-        .node.leaf = {NULL,      false,     &test_cm_type_2}
+        .node.leaf = {NULL,      false,     &test_cm_type_2} /*,
+        .hh = {NULL} */
     }, /* 2 */
 
     {CDBM_NODE_TYPE_LEAF,       true,   "primary-ip",   1,      -1,     4,      NULL,       "/test-types/primary-ip",
-        .node.leaf = {"0.0.0.0", false,     &test_cm_type_ipv4}
+        .node.leaf = {"0.0.0.0", false,     &test_cm_type_ipv4} /*,
+        .hh = {NULL}*/
     }, /* 3 */
 
     {CDBM_NODE_TYPE_LEAF,       true,   "second-ip",    1,      -1,     5,      "/test-types/primary-ip != 0.0.0.0",       "/test-types/second-ip",
-        .node.leaf = {"::",      false,     &test_cm_type_ipv6}
+        .node.leaf = {"::",      false,     &test_cm_type_ipv6} /*,
+        .hh = {NULL} */
     }, /* 4 */
 
     {CDBM_NODE_TYPE_LEAF,       true,   "ipng-v4",      1,      -1,     6,      NULL,       "/test-types/ipng-v4",
-        .node.leaf = {NULL,      false,     &test_cm_type_ipaddr}
+        .node.leaf = {NULL,      false,     &test_cm_type_ipaddr} /*,
+        .hh = {NULL} */
     }, /* 5 */
 
-    {CDBM_NODE_TYPE_LEAF,       true,   "ipng-v5",      1,      -1,     7,      NULL,       "/test-types/ipng-v6",
-        .node.leaf = {NULL,      false,     &test_cm_type_ipaddr}
+    {CDBM_NODE_TYPE_LEAF,       true,   "ipng-v6",      1,      -1,     7,      NULL,       "/test-types/ipng-v6",
+        .node.leaf = {NULL,      false,     &test_cm_type_ipaddr} /*,
+        .hh = {NULL} */
     }, /* 6 */
 
     {CDBM_NODE_TYPE_LEAF,       true,   "speed-uint",   1,      -1,     8,      NULL,       "/test-types/speed-uint",
@@ -164,7 +175,7 @@ T_cdbm_cm_node test_cm_root[] = {
     /* node type                config, name,           parent  child   sibling must        xpath */
     /*  leaf:   default, mandatory, type    */
     /* the follwoing is realm related test data */
-    {CDBM_NODE_TYPE_CONTAINER,  true,   "ip-ream",      0,      14,     -1,     NULL,       "/ip-realm",
+    {CDBM_NODE_TYPE_CONTAINER,  true,   "ip-realm",      0,      14,     -1,     NULL,       "/ip-realm",
         .node.container = {0}
     }, /* 13 */
     
@@ -192,35 +203,35 @@ T_cdbm_cm_node test_cm_root[] = {
         .node.leaf = {NULL,      false,      &test_cm_type_19}
     }, /* 19 */
     
-    {CDBM_NODE_TYPE_LEAF,       true,   "type",         13,     -1,     21,     NULL,       "/ip-realm/realm-table/type",
+    {CDBM_NODE_TYPE_LEAF,       true,   "type",         15,     -1,     21,     NULL,       "/ip-realm/realm-table/type",
         .node.leaf = {"vmg-specific",   false,      &test_cm_type_20}
     }, /* 20 */
     
-    {CDBM_NODE_TYPE_LEAF,       true,   "media-profile",13,     -1,     22,     NULL,       "/ip-realm/realm-table/media-profile",
+    {CDBM_NODE_TYPE_LEAF,       true,   "media-profile",15,     -1,     22,     NULL,       "/ip-realm/realm-table/media-profile",
         .node.leaf = {"default",        false,      &test_cm_type_21}
     }, /* 21 */
     
-    {CDBM_NODE_TYPE_LEAF,       true,   "admin-state",  13,     -1,     23,     NULL,       "/ip-realm/realm-table/admin-state",
+    {CDBM_NODE_TYPE_LEAF,       true,   "admin-state",  15,     -1,     23,     NULL,       "/ip-realm/realm-table/admin-state",
         .node.leaf = {"enable",         false,      &test_cm_type_22}
     }, /* 22 */
     
-    {CDBM_NODE_TYPE_LEAF,       true,   "oper-down",    13,     -1,     24,     NULL,       "/ip-realm/realm-table/oper-down",
+    {CDBM_NODE_TYPE_LEAF,       true,   "oper-down",    15,     -1,     24,     NULL,       "/ip-realm/realm-table/oper-down",
         .node.leaf = {"on-last",        false,      &test_cm_type_23}
     }, /* 23 */
     
-    {CDBM_NODE_TYPE_LEAF,       false,  "oper-state",   13,     -1,     25,     NULL,       "/ip-realm/realm-table/oper-state",
+    {CDBM_NODE_TYPE_LEAF,       false,  "oper-state",   15,     -1,     25,     NULL,       "/ip-realm/realm-table/oper-state",
         .node.leaf = {NULL,             false,      &test_cm_type_str_word}
     }, /* 24 */
     
-    {CDBM_NODE_TYPE_LEAF,       true,   "service-change",13,    -1,     26,     NULL,       "/ip-realm/realm-table/service-change",
+    {CDBM_NODE_TYPE_LEAF,       true,   "service-change",15,    -1,     26,     NULL,       "/ip-realm/realm-table/service-change",
         .node.leaf = {"specific",       false,      &test_cm_type_25}
     }, /* 25 */
     
-    {CDBM_NODE_TYPE_LEAF_LIST,  true,   "vmg-id",       13,     -1,     27,     NULL,       "/ip-realm/realm-table/vmg-id",
+    {CDBM_NODE_TYPE_LEAF_LIST,  true,   "vmg-id",       15,     -1,     27,     NULL,       "/ip-realm/realm-table/vmg-id",
         .node.leaf_list = {0,      10,    0,        &test_cm_type_26}
     }, /* 26 */
     
-    {CDBM_NODE_TYPE_CONTAINER,  true,   "cp-montoring", 13,     28,     33,     NULL,       "/ip-realm/realm-table/cp-monitoring",
+    {CDBM_NODE_TYPE_CONTAINER,  true,   "cp-monitoring",15,     28,     33,     NULL,       "/ip-realm/realm-table/cp-monitoring",
         .node.container = {0}
     }, /* 27 */
     
@@ -258,4 +269,12 @@ T_cdbm_cm_node test_cm_root[] = {
 
 } ;
 
-
+void cdbm_test_print_size()
+{
+    printf("size of data model  : items(%3d), each item(%3d), total (%5d)\n",
+            sizeof(cdbm_test_cm_node)/sizeof(T_cdbm_cm_node),
+            sizeof(T_cdbm_cm_node), sizeof(cdbm_test_cm_node));
+    printf("size of data typedef: items(%3d), each item(%3d), total (%5d)\n",
+            sizeof(cdbm_test_cm_typedef)/sizeof(T_cdbm_cm_typedef),
+            sizeof(T_cdbm_cm_typedef), sizeof(cdbm_test_cm_typedef));
+}

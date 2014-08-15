@@ -13,10 +13,12 @@ typedef struct T_test_config {
     T_global_IP6_ADDR sec_ip;
     T_global_IPNG_ADDR ipng_v4;
     T_global_IPNG_ADDR ipng_v6;
-    char local_mac[IPNG_MAC_STRING_LENGTH];
+    char local_mac[MAC_STRING_LENGTH];
 } T_test_config;
 
 int test_read_config_leaf(const T_cdbm_trans_id trans_id);
 int test_read_config_group(const T_cdbm_trans_id trans_id);
+
+void cdbm_test_print_size();
 
 #endif /* CDBM_TEST_CLIENT_H */

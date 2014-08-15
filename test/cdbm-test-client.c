@@ -68,7 +68,7 @@ T_global_rc test_read_config_group(const T_cdbm_trans_id trans_id)
     //printf("g_test_config.ipng_v6=<%s>\n",
     //       snprintIpnga(ip_addr, IPNG_ADDR_STRING_LENGTH, &g_test_config.ipng_v6));
     
-    cdbm_get_string(trans_id, g_test_config.local_mac, IPNG_MAC_STRING_LENGTH, "/syslog/local-mac");
+    cdbm_get_string(trans_id, g_test_config.local_mac, MAC_STRING_LENGTH, "/syslog/local-mac");
     //printf("g_test_config.local_mac=<%s>\n", g_test_config.local_mac);
 
     //cdbm_read_config_done(trans_id, )

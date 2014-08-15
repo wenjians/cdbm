@@ -18,6 +18,13 @@ typedef enum T_global_rc {
     RC_CDBM_KEYPATH_NOT_MATCH  = -11005,
     RC_CDBM_READ_EMPTY         = -11006,
     RC_CDBM_SET_CONF_STR_FAIL  = -11007,
+    RC_CDBM_INVALID_NODE_TYPE  = -11008,
+
+    RC_CDBM_INVALID_STRING     = -11009,
+    RC_CDBM_STR_NO_SPACE       = -11010,
+
+    RC_CDBM_SYNTAX_ERROR       = -11011,
+    RC_CDBM_VALIDAT_ERROR      = -11012,
 } T_global_rc;
 
 #endif /* CDBM_RET_CODE_H */

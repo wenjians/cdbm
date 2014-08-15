@@ -12,6 +12,7 @@ OBJS = 	${OBJ_DIR}/linux_gfi-print-buffer.o	\
 		${OBJ_DIR}/test_cdbm-test.o \
 		${OBJ_DIR}/test_cdbm-test-client.o \
 		${OBJ_DIR}/test_cdbm-test-data.o \
+		${OBJ_DIR}/src_cdbm-config-model.o \
 		${OBJ_DIR}/src_cdbm-db-node.o \
 		${OBJ_DIR}/src_cdbm-lib.o \
 		${OBJ_DIR}/src_cdbm-mobject.o \
@@ -22,7 +23,7 @@ TARGET_CC = gcc
 
 CFLAGS = -DLANGUAGE_C -Wall -Werror -Wunused-variable -Wunused -Wuninitialized -fno-diagnostics-show-caret -O2 -g 
 DEBUG_FLAGS = -DGFI_MEM_MMGR_MODULE_TEST -DLINUX_MT
-INCLUDES = -I./include -I./linux -I./src
+INCLUDES = -I./include -I./linux -I./src -I./utlib
 
 C_BUILD_FLAGS = ${CFLAGS} ${DEBUG_FLAGS} ${INCLUDES}
 	
