@@ -53,7 +53,7 @@ T_global_rc cdbm_uint32_to_str(const T_cdbm_value *val, char *buf, uint32 len)
     return RC_OK;
 }
 
-T_global_rc cdbm_str_to_uint32(const T_cdbm_dm_type *type, const char *str, T_cdbm_value *val)
+T_global_rc cdbm_str_to_uint32(const T_cdbm_cm_type *type, const char *str, T_cdbm_value *val)
 {
     char* pend=NULL;
     T_global_rc ret_code;
@@ -74,7 +74,7 @@ T_global_rc cdbm_str_to_uint32(const T_cdbm_dm_type *type, const char *str, T_cd
 
 
 // TODO uint32 validation
-T_global_rc cdbm_uint32_validate(const T_cdbm_dm_type *type, const T_cdbm_value *val)
+T_global_rc cdbm_uint32_validate(const T_cdbm_cm_type *type, const T_cdbm_value *val)
 {
     return RC_OK;
 }
@@ -101,7 +101,7 @@ T_global_rc cdbm_int32_to_str(const T_cdbm_value *val, char *buf, uint32 len)
     return RC_OK;
 }
 
-T_global_rc cdbm_str_to_int32(const T_cdbm_dm_type *type, const char *str, T_cdbm_value *val)
+T_global_rc cdbm_str_to_int32(const T_cdbm_cm_type *type, const char *str, T_cdbm_value *val)
 {
     char* pend=NULL;
     T_global_rc ret_code;
@@ -125,7 +125,7 @@ T_global_rc cdbm_str_to_int32(const T_cdbm_dm_type *type, const char *str, T_cdb
 
 
 // TODO  int32 validation
-T_global_rc cdbm_int32_validate(const T_cdbm_dm_type *type, const T_cdbm_value *val)
+T_global_rc cdbm_int32_validate(const T_cdbm_cm_type *type, const T_cdbm_value *val)
 {
     return RC_OK;
 }
@@ -145,7 +145,7 @@ bool cdbm_ipv4_val_eq(const T_cdbm_value *v1, const T_cdbm_value *v2)
     return ip4_is_addr_equal(v1->val.ipv4, v2->val.ipv4);
 }
 
-T_global_rc cdbm_str_to_ipv4(const T_cdbm_dm_type *type, const char *str, T_cdbm_value *val)
+T_global_rc cdbm_str_to_ipv4(const T_cdbm_cm_type *type, const char *str, T_cdbm_value *val)
 {
     T_global_IP_ADDR ipv4;
     T_global_rc ret_code;
@@ -174,7 +174,7 @@ T_global_rc cdbm_ipv4_to_str(const T_cdbm_value *val, char *str, uint32 len)
 
 
 // TODO  ipv4 validation
-T_global_rc cdbm_ipv4_validate(const T_cdbm_dm_type *type, const T_cdbm_value *val)
+T_global_rc cdbm_ipv4_validate(const T_cdbm_cm_type *type, const T_cdbm_value *val)
 {
     return RC_OK;
 }
@@ -194,7 +194,7 @@ bool cdbm_ipv6_val_eq(const T_cdbm_value *v1, const T_cdbm_value *v2)
     return ip6_is_addr_equal(v1->val.ipv6, v2->val.ipv6);
 }
 
-T_global_rc cdbm_str_to_ipv6(const T_cdbm_dm_type *type, const char *str, T_cdbm_value *val)
+T_global_rc cdbm_str_to_ipv6(const T_cdbm_cm_type *type, const char *str, T_cdbm_value *val)
 {
     T_global_IP6_ADDR ipv6;
     T_global_rc ret_code;
@@ -225,7 +225,7 @@ T_global_rc cdbm_ipv6_to_str(const T_cdbm_value *val, char *str, uint32 len)
 
 
 // TODO  ipv6 validation
-T_global_rc cdbm_ipv6_validate(const T_cdbm_dm_type *type, const T_cdbm_value *val)
+T_global_rc cdbm_ipv6_validate(const T_cdbm_cm_type *type, const T_cdbm_value *val)
 {
     return RC_OK;
 }
@@ -244,7 +244,7 @@ bool cdbm_ipng_val_eq(const T_cdbm_value *v1, const T_cdbm_value *v2)
     return ipng_is_addr_equal(v1->val.ip_addr, v2->val.ip_addr);
 }
 
-T_global_rc cdbm_str_to_ipng(const T_cdbm_dm_type *type, const char *str, T_cdbm_value *val)
+T_global_rc cdbm_str_to_ipng(const T_cdbm_cm_type *type, const char *str, T_cdbm_value *val)
 {
     T_global_IPNG_ADDR ip_addr;
     T_global_rc ret_code;
@@ -271,7 +271,7 @@ T_global_rc cdbm_ipng_to_str(const T_cdbm_value *val, char *str, uint32 len)
 
 
 // TODO  ipng validation
-T_global_rc cdbm_ipng_validate(const T_cdbm_dm_type *type, const T_cdbm_value *val)
+T_global_rc cdbm_ipng_validate(const T_cdbm_cm_type *type, const T_cdbm_value *val)
 {
     return RC_OK;
 }
@@ -295,21 +295,21 @@ bool cdbm_val_eq(const T_cdbm_value *v1, const T_cdbm_value *v2)
 /* parse value located in str, and validate.
 * returns RC_OK if value is syntactically correct, and others otherwise.
 */
-T_global_rc cdbm_str_to_val(const T_cdbm_dm_type *type, const char *str, T_cdbm_value *val)
+T_global_rc cdbm_str_to_val(const T_cdbm_cm_type *type, const char *str, T_cdbm_value *val)
 {
     return RC_OK;
 }
 
 
 
-int cdbm_val_to_str(const T_cdbm_dm_type *type, const T_cdbm_value *val, char *str, uint32 len, const char **strp)
+int cdbm_val_to_str(const T_cdbm_cm_type *type, const T_cdbm_value *val, char *str, uint32 len, const char **strp)
 {
     return 0;
 }
 
 /* returns RC_OK if value is correct, otherwise RC_FAIL
 */
-T_global_rc cdbm_validate(const T_cdbm_dm_type *type, const T_cdbm_value *val)
+T_global_rc cdbm_validate(const T_cdbm_cm_type *type, const T_cdbm_value *val)
 {
     return RC_OK;
 }
