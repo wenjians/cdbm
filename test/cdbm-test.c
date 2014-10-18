@@ -18,8 +18,8 @@
  **************************************************************************/
 int main();
 
-extern T_cdbm_cm_typedef cdbm_test_cm_typedef[];
-extern T_cdbm_cm_node cdbm_test_cm_node[] ;
+extern T_cdbm_dm_typedef cdbm_test_cm_typedef[];
+extern T_cdbm_dm_node cdbm_test_cm_node[] ;
 
 static int cdbm_test_misc_lib();
 static int cdbm_test_transaction();
@@ -55,7 +55,7 @@ int main()
     cdbm_lib_init(2);
     
     cdbm_cm_attach_data(cdbm_test_cm_node, cdbm_test_cm_typedef);
-    cdbm_cm_init();
+    cdbm_dm_init();
 
     cdbm_test_print_size();
 
@@ -69,7 +69,7 @@ int main()
  * test case definitions
  **************************************************************************/
 uint32 prefix_space_cnt=0;
-T_global_rc cdbm_test_print_node(T_cdbm_cm_node* cm_node)
+T_global_rc cdbm_test_print_node(T_cdbm_dm_node* cm_node)
 {
     int space;
     char fmt[80];
@@ -84,7 +84,7 @@ T_global_rc cdbm_test_print_node(T_cdbm_cm_node* cm_node)
     return RC_OK;
 }
 
-T_global_rc cdbm_test_print_enter_container(T_cdbm_cm_node* cur_node)
+T_global_rc cdbm_test_print_enter_container(T_cdbm_dm_node* cur_node)
 {
     prefix_space_cnt+=4;
     cdbm_test_print_node(cur_node);
@@ -92,7 +92,7 @@ T_global_rc cdbm_test_print_enter_container(T_cdbm_cm_node* cur_node)
     return RC_OK;
 }
 
-T_global_rc cdbm_test_print_exit_container(T_cdbm_cm_node* cm_node)
+T_global_rc cdbm_test_print_exit_container(T_cdbm_dm_node* cm_node)
 {
     prefix_space_cnt -= 4;
 
@@ -101,7 +101,7 @@ T_global_rc cdbm_test_print_exit_container(T_cdbm_cm_node* cm_node)
 
 T_global_rc cdbm_cm_test_printall()
 {
-    T_cdbm_cm_node_ops node_ops = {
+    T_cdbm_dm_node_ops node_ops = {
         cdbm_test_print_enter_container,
         cdbm_test_print_exit_container,
         cdbm_test_print_enter_container,
@@ -112,7 +112,7 @@ T_global_rc cdbm_cm_test_printall()
         NULL
     };
 
-    cdbm_cm_node_walk(&node_ops);
+    cdbm_dm_node_walk(&node_ops);
 
     return RC_OK;
 }
@@ -398,20 +398,20 @@ static int cdbm_test_mo_group()
 
 static int cdbm_test_cm_hash_search()
 {
-    T_cdbm_cm_node *cm_node;
-    cm_node = cdbm_cm_get_node_from_keypath("/");
-    VASSERT_TRUE(cdbm_cm_is_root(cm_node));
+    T_cdbm_dm_node *cm_node;
+    cm_node = cdbm_dm_get_node_from_keypath("/");
+    VASSERT_TRUE(cdbm_dm_is_root(cm_node));
 
-    cm_node = cdbm_cm_get_node_from_keypath("/ip-realm/realm-table/ip-if");
-    VASSERT_TRUE(cmbm_cm_is_list(cm_node));
+    cm_node = cdbm_dm_get_node_from_keypath("/ip-realm/realm-table/ip-if");
+    VASSERT_TRUE(cmbm_dm_is_list(cm_node));
 
-    cm_node = cdbm_cm_get_node_from_keypath("/ip-realm/realm-table/vmg-id");
-    VASSERT_TRUE(cmbm_cm_is_leaf_list(cm_node));
+    cm_node = cdbm_dm_get_node_from_keypath("/ip-realm/realm-table/vmg-id");
+    VASSERT_TRUE(cmbm_dm_is_leaf_list(cm_node));
 
-    cm_node = cdbm_cm_get_node_from_keypath("/ip-realm/realm-table/cp-monitoring/admin-state");
-    VASSERT_TRUE(cmbm_cm_is_leaf(cm_node));
+    cm_node = cdbm_dm_get_node_from_keypath("/ip-realm/realm-table/cp-monitoring/admin-state");
+    VASSERT_TRUE(cmbm_dm_is_leaf(cm_node));
 
-    cm_node = cdbm_cm_get_node_from_keypath("/test");
+    cm_node = cdbm_dm_get_node_from_keypath("/test");
     VASSERT_TRUE(cm_node==NULL);
 
     return 0;

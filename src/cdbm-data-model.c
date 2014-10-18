@@ -23,7 +23,7 @@
  *
  */
 
-void cdbm_cm_attach_data(T_cdbm_cm_node *_node, T_cdbm_cm_typedef *_typedef)
+void cdbm_cm_attach_data(T_cdbm_dm_node *_node, T_cdbm_dm_typedef *_typedef)
 {
     AAT_STD_ASSERT(_typedef != NULL);
     AAT_STD_ASSERT(_node);
@@ -32,14 +32,14 @@ void cdbm_cm_attach_data(T_cdbm_cm_node *_node, T_cdbm_cm_typedef *_typedef)
     g_cdbm_db.cm_typedef = _typedef;
 }
 
-static inline bool cdbm_cm_node_idx_is_valid(T_cdbm_cm_node_idx node_idx)
+static inline bool cdbm_cm_node_idx_is_valid(T_cdbm_dm_node_idx node_idx)
 {
     return node_idx != CDBM_CM_INVALID_IDX;
 }
 
 extern struct T_cdbm_db_data g_cdbm_db;
 
-static inline T_cdbm_cm_node* cdbm_cm_get_node_from_id(T_cdbm_cm_node_idx node_idx)
+static inline T_cdbm_dm_node* cdbm_cm_get_node_from_id(T_cdbm_dm_node_idx node_idx)
 {
     if (!cdbm_cm_node_idx_is_valid(node_idx)) {
         return NULL;
@@ -50,32 +50,32 @@ static inline T_cdbm_cm_node* cdbm_cm_get_node_from_id(T_cdbm_cm_node_idx node_i
     return  g_cdbm_db.cm_node + node_idx;
 }
 
-T_cdbm_cm_node* cdbm_cm_get_node_from_keypath(const char* key_path)
+T_cdbm_dm_node* cdbm_dm_get_node_from_keypath(const char* key_path)
 {
-    T_cdbm_cm_node *cm_node;
+    T_cdbm_dm_node *cm_node;
     HASH_FIND_STR(g_cdbm_db.cm_node_hash, key_path, cm_node);
 
     return cm_node;
 }
 
-bool cdbm_cm_is_root(T_cdbm_cm_node *cm_node) {
+bool cdbm_dm_is_root(T_cdbm_dm_node *cm_node) {
     return (cm_node->parent_idx == -1);
 }
 
 
-bool cmbm_cm_is_container(T_cdbm_cm_node *cm_node) {
+bool cmbm_dm_is_container(T_cdbm_dm_node *cm_node) {
     return (cm_node->node_type == CDBM_NODE_TYPE_CONTAINER);
 }
 
-bool cmbm_cm_is_list(T_cdbm_cm_node *cm_node) {
+bool cmbm_dm_is_list(T_cdbm_dm_node *cm_node) {
     return (cm_node->node_type == CDBM_NODE_TYPE_LIST);
 }
 
-bool cmbm_cm_is_leaf(T_cdbm_cm_node *cm_node) {
+bool cmbm_dm_is_leaf(T_cdbm_dm_node *cm_node) {
     return (cm_node->node_type == CDBM_NODE_TYPE_LEAF);
 }
 
-bool cmbm_cm_is_leaf_list(T_cdbm_cm_node *cm_node) {
+bool cmbm_dm_is_leaf_list(T_cdbm_dm_node *cm_node) {
     return (cm_node->node_type == CDBM_NODE_TYPE_LEAF_LIST);
 }
 
@@ -101,21 +101,21 @@ do {                                            \
         }
 */
 
-T_global_rc cdbm_cm_node_walk_one_node(T_cdbm_cm_node *cur_node, T_cdbm_cm_node_ops *node_ops)
+T_global_rc cdbm_cm_node_walk_one_node(T_cdbm_dm_node *cur_node, T_cdbm_dm_node_ops *node_ops)
 {
-    T_cdbm_cm_node *child;
-    T_cdbm_cm_node_idx child_idx;
+    T_cdbm_dm_node *child;
+    T_cdbm_dm_node_idx child_idx;
     //T_global_rc ret_cod = RC_OK;
 
     if (cur_node == NULL) {
         return RC_FAILED;
     }
 
-    if (cmbm_cm_is_leaf(cur_node)) {
+    if (cmbm_dm_is_leaf(cur_node)) {
         CDBM_CM_NODE_VISIT(cur_node, node_ops->enter_leaf);
         CDBM_CM_NODE_VISIT(cur_node, node_ops->exit_leaf);
     }
-    else if (cmbm_cm_is_container(cur_node))
+    else if (cmbm_dm_is_container(cur_node))
     {
         CDBM_CM_NODE_VISIT(cur_node, node_ops->enter_container);
 
@@ -129,7 +129,7 @@ T_global_rc cdbm_cm_node_walk_one_node(T_cdbm_cm_node *cur_node, T_cdbm_cm_node_
 
         CDBM_CM_NODE_VISIT(cur_node, node_ops->exit_container);
     }
-    else if (cmbm_cm_is_list(cur_node))
+    else if (cmbm_dm_is_list(cur_node))
     {
         CDBM_CM_NODE_VISIT(cur_node, node_ops->enter_list);
 
@@ -143,7 +143,7 @@ T_global_rc cdbm_cm_node_walk_one_node(T_cdbm_cm_node *cur_node, T_cdbm_cm_node_
 
         CDBM_CM_NODE_VISIT(cur_node, node_ops->exit_list);
     }
-    else if (cmbm_cm_is_leaf_list(cur_node))
+    else if (cmbm_dm_is_leaf_list(cur_node))
     {
         CDBM_CM_NODE_VISIT(cur_node, node_ops->enter_leaf_list);
         CDBM_CM_NODE_VISIT(cur_node, node_ops->exit_leaf_list);
@@ -157,7 +157,7 @@ T_global_rc cdbm_cm_node_walk_one_node(T_cdbm_cm_node *cur_node, T_cdbm_cm_node_
     return RC_OK;
 }
 
-T_global_rc cdbm_cm_node_walk(T_cdbm_cm_node_ops *node_ops)
+T_global_rc cdbm_dm_node_walk(T_cdbm_dm_node_ops *node_ops)
 {
     //T_cdbm_cm_node *cur_node, *parent_node;
 
@@ -167,8 +167,8 @@ T_global_rc cdbm_cm_node_walk(T_cdbm_cm_node_ops *node_ops)
 }
 
 
-const char* cdbm_cm_get_key_path(T_cdbm_cm_node_idx node_idx) {
-    T_cdbm_cm_node* cm_node = cdbm_cm_get_node_from_id(node_idx);
+const char* cdbm_cm_get_key_path(T_cdbm_dm_node_idx node_idx) {
+    T_cdbm_dm_node* cm_node = cdbm_cm_get_node_from_id(node_idx);
     if (cm_node == NULL) {
         return "";
     }
@@ -176,7 +176,7 @@ const char* cdbm_cm_get_key_path(T_cdbm_cm_node_idx node_idx) {
     return cm_node->key_path;
 }
 
-T_global_rc cdbm_cm_node_init(T_cdbm_cm_node* cm_node)
+T_global_rc cdbm_cm_node_init(T_cdbm_dm_node* cm_node)
 {
     char key_path[CDBM_MAX_KEYPATH_LEN];
 
@@ -188,12 +188,12 @@ T_global_rc cdbm_cm_node_init(T_cdbm_cm_node* cm_node)
     }
 
     /* verify that the key path is correct for each configuration model node */
-    if (cdbm_cm_is_root(cm_node))
+    if (cdbm_dm_is_root(cm_node))
     {
         AAT_FMT_ASSERT(strcmp(cm_node->key_path, "/")==0,
                        ("key_path (%s) of root is not correct!", cm_node->key_path));
     }
-    else if (cdbm_cm_is_root(cdbm_cm_get_node_from_id(cm_node->parent_idx)))
+    else if (cdbm_dm_is_root(cdbm_cm_get_node_from_id(cm_node->parent_idx)))
     {
         snprintf(key_path, CDBM_MAX_KEYPATH_LEN, "/%s", cm_node->key_name);
         AAT_FMT_ASSERT(strcmp(cm_node->key_path, key_path)==0,
@@ -210,7 +210,7 @@ T_global_rc cdbm_cm_node_init(T_cdbm_cm_node* cm_node)
     /* key_name should be trim of space,  key_path don't need check
      * because it will verified by key name
      */
-    if (!cdbm_cm_is_root(cm_node))
+    if (!cdbm_dm_is_root(cm_node))
     {
         AAT_FMT_ASSERT(strlen(cm_node->key_name),
                        ("key name nust be not empty, parent (%s)",
@@ -224,10 +224,10 @@ T_global_rc cdbm_cm_node_init(T_cdbm_cm_node* cm_node)
     return RC_OK;
 }
 
-T_global_rc cdbm_cm_init()
+T_global_rc cdbm_dm_init()
 {
     T_global_rc ret_cod;
-    T_cdbm_cm_node_ops node_ops = {
+    T_cdbm_dm_node_ops node_ops = {
         cdbm_cm_node_init,        NULL,
         cdbm_cm_node_init,        NULL,
         cdbm_cm_node_init,        NULL,
@@ -235,7 +235,7 @@ T_global_rc cdbm_cm_init()
     };
 
     g_cdbm_db.cm_node_hash = NULL;
-    ret_cod = cdbm_cm_node_walk(&node_ops);
+    ret_cod = cdbm_dm_node_walk(&node_ops);
     CDBM_RET_IF_FAIL(ret_cod);
 
     return RC_OK;

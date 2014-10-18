@@ -20,7 +20,7 @@
 
 T_cdbm_type_enum_value test_enum_type_def_1[] = {{"enable", 1, 1}, {"disable", 1, 0}};
 
-T_cdbm_cm_typedef cdbm_test_cm_typedef[] = {
+T_cdbm_dm_typedef cdbm_test_cm_typedef[] = {
     /*name          builtin defalt   union.type       */
     /*  derived:    typedef_idx     range,      pattern_count,   pattern_list */
     {"uint32",      1,      NULL,   .type.builtin = CDBM_TYPE_UINT32},  /* 0 */
@@ -68,46 +68,46 @@ uint32 cdbm_test_get_sizeof_typedef()
  ******            the following is type declaration which is used for leaf/leaf_list     *********
  *************************************************************************************************/
 /* some predefined IP definition */
-T_cdbm_cm_type test_cm_type_uint32 = { 0, CDBM_TYPE_EMPTY, .type.t_empty   = {0}};
-T_cdbm_cm_type test_cm_type_int32  = { 1, CDBM_TYPE_EMPTY, .type.t_empty   = {0}};
-T_cdbm_cm_type test_cm_type_ipv4   = { 2, CDBM_TYPE_EMPTY, .type.t_empty   = {0}};
-T_cdbm_cm_type test_cm_type_ipv6   = { 3, CDBM_TYPE_EMPTY, .type.t_empty   = {0}};
-T_cdbm_cm_type test_cm_type_ipaddr = { 4, CDBM_TYPE_EMPTY, .type.t_empty   = {0}};
-T_cdbm_cm_type test_cm_type_mac    = { 5, CDBM_TYPE_EMPTY, .type.t_empty   = {0}};
-T_cdbm_cm_type test_cm_type_hex    = { 6, CDBM_TYPE_EMPTY, .type.t_empty   = {0}};
-T_cdbm_cm_type test_cm_type_string = { 7, CDBM_TYPE_EMPTY, .type.t_empty   = {0}};
-T_cdbm_cm_type test_cm_type_str_word = { 8, CDBM_TYPE_EMPTY,.type.t_empty  = {0}};
+T_cdbm_dm_type test_cm_type_uint32 = { 0, CDBM_TYPE_EMPTY, .type.t_empty   = {0}};
+T_cdbm_dm_type test_cm_type_int32  = { 1, CDBM_TYPE_EMPTY, .type.t_empty   = {0}};
+T_cdbm_dm_type test_cm_type_ipv4   = { 2, CDBM_TYPE_EMPTY, .type.t_empty   = {0}};
+T_cdbm_dm_type test_cm_type_ipv6   = { 3, CDBM_TYPE_EMPTY, .type.t_empty   = {0}};
+T_cdbm_dm_type test_cm_type_ipaddr = { 4, CDBM_TYPE_EMPTY, .type.t_empty   = {0}};
+T_cdbm_dm_type test_cm_type_mac    = { 5, CDBM_TYPE_EMPTY, .type.t_empty   = {0}};
+T_cdbm_dm_type test_cm_type_hex    = { 6, CDBM_TYPE_EMPTY, .type.t_empty   = {0}};
+T_cdbm_dm_type test_cm_type_string = { 7, CDBM_TYPE_EMPTY, .type.t_empty   = {0}};
+T_cdbm_dm_type test_cm_type_str_word = { 8, CDBM_TYPE_EMPTY,.type.t_empty  = {0}};
 
 T_cdbm_type_enum_value test_enum_type_2[] = {{"remote", 1, 1}, {"local", 1, 2}, {"none", 1, 3}};
-T_cdbm_cm_type test_cm_type_2 = { 9, CDBM_TYPE_ENUM_HASH,   .type.t_enum = {3, test_enum_type_def_1}};
-T_cdbm_cm_type test_cm_type_7 = { 0, CDBM_TYPE_UINT32,      .type.t_int = {"10..500"}};
-T_cdbm_cm_type test_cm_type_8 = { 1, CDBM_TYPE_INT32,       .type.t_int  = {"-50..50 | 100 | 200..300"}};
-T_cdbm_cm_type test_cm_type_10= { 7, CDBM_TYPE_STRING,      .type.t_string  = {"1..20"}};
-T_cdbm_cm_type test_cm_type_11= { 8, CDBM_TYPE_STR_WORD,    .type.t_string  = {"1..10"}};
+T_cdbm_dm_type test_cm_type_2 = { 9, CDBM_TYPE_ENUM_HASH,   .type.t_enum = {3, test_enum_type_def_1}};
+T_cdbm_dm_type test_cm_type_7 = { 0, CDBM_TYPE_UINT32,      .type.t_int = {"10..500"}};
+T_cdbm_dm_type test_cm_type_8 = { 1, CDBM_TYPE_INT32,       .type.t_int  = {"-50..50 | 100 | 200..300"}};
+T_cdbm_dm_type test_cm_type_10= { 7, CDBM_TYPE_STRING,      .type.t_string  = {"1..20"}};
+T_cdbm_dm_type test_cm_type_11= { 8, CDBM_TYPE_STR_WORD,    .type.t_string  = {"1..10"}};
 
 
-T_cdbm_cm_type test_cm_type_16 = {10, CDBM_TYPE_STR_WORD,    .type.t_string  = {NULL}};
-T_cdbm_cm_type test_cm_type_19 = {11, CDBM_TYPE_UINT32,      .type.t_int  = {NULL}};
+T_cdbm_dm_type test_cm_type_16 = {10, CDBM_TYPE_STR_WORD,    .type.t_string  = {NULL}};
+T_cdbm_dm_type test_cm_type_19 = {11, CDBM_TYPE_UINT32,      .type.t_int  = {NULL}};
 T_cdbm_type_enum_value test_enum_type_20[] = {{"system", 0, 0}, {"vmg-specific", 0, 0}};
-T_cdbm_cm_type test_cm_type_20 = { 9, CDBM_TYPE_ENUM_HASH,   .type.t_enum = {2, test_enum_type_20}};
-T_cdbm_cm_type test_cm_type_21 = { 8, CDBM_TYPE_STR_WORD,    .type.t_string = {"1..20"}};
-T_cdbm_cm_type test_cm_type_22 = {13, CDBM_TYPE_EMPTY,       .type.t_empty = {0}};
+T_cdbm_dm_type test_cm_type_20 = { 9, CDBM_TYPE_ENUM_HASH,   .type.t_enum = {2, test_enum_type_20}};
+T_cdbm_dm_type test_cm_type_21 = { 8, CDBM_TYPE_STR_WORD,    .type.t_string = {"1..20"}};
+T_cdbm_dm_type test_cm_type_22 = {13, CDBM_TYPE_EMPTY,       .type.t_empty = {0}};
 T_cdbm_type_enum_value test_enum_type_23[] = { {"on-first", 1, 0}, {"on-last", 1, 1}};
-T_cdbm_cm_type test_cm_type_23 = { 9, CDBM_TYPE_ENUM_HASH,   .type.t_enum = {2, test_enum_type_23}};
+T_cdbm_dm_type test_cm_type_23 = { 9, CDBM_TYPE_ENUM_HASH,   .type.t_enum = {2, test_enum_type_23}};
 T_cdbm_type_enum_value test_enum_type_25[] = { {"specific", 1, 0}, {"root", 1, 1}, {"none", 1, 2}};
-T_cdbm_cm_type test_cm_type_25 = { 9, CDBM_TYPE_ENUM_HASH,   .type.t_enum = {3, test_enum_type_25}};
-T_cdbm_cm_type test_cm_type_26 = {12, CDBM_TYPE_UINT32,      .type.t_empty= {0}};
-T_cdbm_cm_type test_cm_type_30 = {15, CDBM_TYPE_STR_WORD,    .type.t_empty= {0}};
-T_cdbm_cm_type test_cm_type_33 = { 0, CDBM_TYPE_UINT32,      .type.t_int  = {"10..1000"}};
-T_cdbm_cm_type test_cm_type_34 = { 0, CDBM_TYPE_UINT32,      .type.t_int  = {"10..1000"}};
-T_cdbm_cm_type test_cm_type_35 = { 0, CDBM_TYPE_UINT32,      .type.t_int  = {"0..3600000"}};
+T_cdbm_dm_type test_cm_type_25 = { 9, CDBM_TYPE_ENUM_HASH,   .type.t_enum = {3, test_enum_type_25}};
+T_cdbm_dm_type test_cm_type_26 = {12, CDBM_TYPE_UINT32,      .type.t_empty= {0}};
+T_cdbm_dm_type test_cm_type_30 = {15, CDBM_TYPE_STR_WORD,    .type.t_empty= {0}};
+T_cdbm_dm_type test_cm_type_33 = { 0, CDBM_TYPE_UINT32,      .type.t_int  = {"10..1000"}};
+T_cdbm_dm_type test_cm_type_34 = { 0, CDBM_TYPE_UINT32,      .type.t_int  = {"10..1000"}};
+T_cdbm_dm_type test_cm_type_35 = { 0, CDBM_TYPE_UINT32,      .type.t_int  = {"0..3600000"}};
 
 
 /**************************************************************************************************
  ******               the following is CDBM configuration parameter model                    ******
  *************************************************************************************************/
 
-T_cdbm_cm_node cdbm_test_cm_node[] = {
+T_cdbm_dm_node cdbm_test_cm_node[] = {
     /* node type                config, name,           parent  child,  sibling must,       xpath */
     /*  leaf:   default, mandatory, type    */
     {CDBM_NODE_TYPE_CONTAINER,  false,  NULL,           -1,     1,      -1,     NULL,       "/",
@@ -272,9 +272,9 @@ T_cdbm_cm_node cdbm_test_cm_node[] = {
 void cdbm_test_print_size()
 {
     printf("size of data model  : items(%3d), each item(%3d), total (%5d)\n",
-            sizeof(cdbm_test_cm_node)/sizeof(T_cdbm_cm_node),
-            sizeof(T_cdbm_cm_node), sizeof(cdbm_test_cm_node));
+            sizeof(cdbm_test_cm_node)/sizeof(T_cdbm_dm_node),
+            sizeof(T_cdbm_dm_node), sizeof(cdbm_test_cm_node));
     printf("size of data typedef: items(%3d), each item(%3d), total (%5d)\n",
-            sizeof(cdbm_test_cm_typedef)/sizeof(T_cdbm_cm_typedef),
-            sizeof(T_cdbm_cm_typedef), sizeof(cdbm_test_cm_typedef));
+            sizeof(cdbm_test_cm_typedef)/sizeof(T_cdbm_dm_typedef),
+            sizeof(T_cdbm_dm_typedef), sizeof(cdbm_test_cm_typedef));
 }

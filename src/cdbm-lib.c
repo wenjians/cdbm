@@ -8,7 +8,7 @@
 #include "cdbm-lib.h"
 #include "cdbm-db.h"
 
-T_cdbm_db_data g_cdbm_db;
+T_cdbm_global_data g_cdbm_db;
 
 void cdbm_lib_init(int phase)
 {
@@ -48,31 +48,3 @@ uint32 cdbm_lib_get_next_token(const char* buffer, char* token, uint32 max_len)
     return dst-token;
 }
 
-/*
- * int GetNumberType(char* token)
-{
-    if (strlen(token)<2)
-        return 10 ;
-    if (token[0] == '0' && tolower(token[1])== 'x')
-        return 16 ;
-
-    return 10 ;
-}
- *  case PARAM_TYPE_INT4:       // int
-        pVariable->value.i4Param = strtol(token, &pend, GetNumberType(token)) ;
-        if (!isspace(*pend) && (*pend) ||   // there is something error with number
-            (pParam->u4Define1 != 0 || pParam->u4Define2 != 0) &&
-            (pVariable->value.i4Param < (INT4)pParam->u4Define1 ||  // too small
-             pVariable->value.i4Param > (INT4)pParam->u4Define2))   // too big
-                return PARSE_PARAM_WRONG ;
-        break ;
-
-    case PARAM_TYPE_UINT4:      // int
-        pVariable->value.u4Param = strtoul(token, &pend, GetNumberType(token)) ;
-        if (!isspace(*pend) && (*pend) ||   // there is something error with number
-            (pParam->u4Define1 != 0 || pParam->u4Define2 != 0) &&   // need compare
-            (pVariable->value.u4Param < pParam->u4Define1 ||    // too small
-             pVariable->value.u4Param > pParam->u4Define2))     // too big
-                return PARSE_PARAM_WRONG ;
-        break ;
- */

@@ -3,15 +3,15 @@
  * CDBM database internal type definition and API definition
  */
 
-#ifndef _CDBM_DB_H_
-#define _CDBM_DB_H_
+#ifndef _CDBM_GLOBAL_DATA_H_
+#define _CDBM_GLOBAL_DATA_H_
 
 #include "gfi-list.h"
 #include "gfi-lock.h"
 #include "cdbm-data-model.h"
 
 /* it is the global data definition for CDBM module */
-typedef struct T_cdbm_db_data
+typedef struct T_cdbm_global_data
 {
     /* the following is for CDBM transaction related data structure */
     T_gfi_list_head *trans_list;
@@ -19,12 +19,12 @@ typedef struct T_cdbm_db_data
 
 
     /* the following is global data for configuration model */
-    T_cdbm_cm_typedef *cm_typedef;
-    T_cdbm_cm_node *cm_node;
-    T_cdbm_cm_node *cm_node_hash;
-} T_cdbm_db_data;
+    T_cdbm_dm_typedef *cm_typedef;
+    T_cdbm_dm_node *cm_node;
+    T_cdbm_dm_node *cm_node_hash;
+} T_cdbm_global_data;
 
-extern T_cdbm_db_data g_cdbm_db;
+extern T_cdbm_global_data g_cdbm_db;
 
 
 
@@ -35,4 +35,4 @@ void cdbm_lib_init(int phase);
 
 
 
-#endif /* _CDBM_DB_H_ */
+#endif /* _CDBM_GLOBAL_DATA_H_ */
