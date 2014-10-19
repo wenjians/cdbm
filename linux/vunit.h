@@ -24,8 +24,8 @@
 #define VASSERT_EQ(expect, actual) \
 do {\
     if((expect) != (actual)) {\
-        VUNIT_PRINTF("%s(%d): expect<0x%x>, but was<0x%x:%d:%u>\n", \
-            __FUNCTION__, __LINE__, (unsigned int)(expect), \
+        VUNIT_PRINTF("%s(%d): expect<0x%x:%d:%u>, but was<0x%x:%d:%u>\n", \
+            __FUNCTION__, __LINE__, (unsigned int)(expect), expect, expect, \
             (unsigned int)(actual), actual, actual);\
         return -1;\
     }\

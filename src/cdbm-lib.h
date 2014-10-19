@@ -7,12 +7,6 @@
 #include "gfi-list.h"
 
 
-#define CDBM_RET_IF_FAIL(ret_cod)  \
-do {                            \
-    if (ret_cod != RC_OK)       \
-        return ret_cod;         \
-} while (0)
-
 typedef struct T_cdbm_trans {
     T_gfi_list   list_node;   // all the transaction items will be in one list
 

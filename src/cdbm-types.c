@@ -3,7 +3,7 @@
 
 
 #include "cdbm-types.h"
-
+#include "cdbm-event.h"
 
 /* the following is operation for different types, for each type, the following
  * operation are mandatory:
@@ -33,6 +33,32 @@ static int cdbm_type_get_base(const char* token)
 }
 
 
+T_cdbm_val_opt g_cdbm_val_ops[CDBM_TYPE_MAX] = {
+
+    /* val_type         val_eq,             val_to_str,         str_to_val,         val_valid           */
+    {CDBM_TYPE_EMPTY,   NULL,               NULL,               NULL,               NULL                },
+    {CDBM_TYPE_UINT32,  cdbm_uint32_val_eq, cdbm_uint32_to_str, cdbm_str_to_uint32, cdbm_uint32_validate}
+
+    /*
+    CDBM_TYPE_EMPTY         =  0,
+    CDBM_TYPE_UINT32        =  1,
+    CDBM_TYPE_INT32         =  2,
+    CDBM_TYPE_IPV4          =  3,
+    CDBM_TYPE_IPV6          =  4,
+    CDBM_TYPE_IPADDR        =  5,
+    CDBM_TYPE_MAC           =  6,
+    CDBM_TYPE_HEX           =  7,
+    CDBM_TYPE_STRING        =  8,
+    CDBM_TYPE_STR_WORD      =  9,
+    CDBM_TYPE_BOOL          = 10,
+    CDBM_TYPE_ENUM_HASH     = 11,
+    CDBM_TYPE_BUF           = 12,
+    CDBM_TYPE_MAX,  
+    */
+};
+    
+
+
 /******************************************************************************
  *  the following is types for "uint32"
  *****************************************************************************/
@@ -48,7 +74,7 @@ T_global_rc cdbm_uint32_to_str(const T_cdbm_value *val, char *buf, uint32 len)
 {
     AAT_STD_ASSERT(buf != NULL);
 
-    snprintf(buf, len, "%lu", val->val.u32);
+    snprintf(buf, len, "%u", val->val.u32);
 
     return RC_OK;
 }
@@ -80,7 +106,7 @@ T_global_rc cdbm_uint32_validate(const T_cdbm_dm_type *type, const T_cdbm_value 
 }
 
 
-
+#if 0
 /******************************************************************************
  *  the following is types for "int32"
  *****************************************************************************/
@@ -353,6 +379,29 @@ void cdbm_free_dup_value(T_cdbm_value *val)
 
 }
 
+#endif
 
+
+
+
+
+/* the following is used for range check */
+bool cdbm_val_get_next_range(const char* range_list, char* one_range, uint32 max_len)
+{
+
+}
+bool cdbm_int32_val_in_range(int32 val, const char* range_list)
+{
+    char one_range[128];
+
+    return false;
+}
+
+bool cdbm_uint32_val_in_range(int32 val, const char* range_list)
+{
+    char one_range[128];
+
+    return false;
+}
 
 

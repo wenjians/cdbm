@@ -21,10 +21,11 @@ typedef enum T_global_rc {
     RC_CDBM_INVALID_NODE_TYPE  = -11008,
 
     RC_CDBM_INVALID_STRING     = -11009,
-    RC_CDBM_STR_NO_SPACE       = -11010,
+    RC_CDBM_INVALID_RANGE      = -11010,
+    RC_CDBM_STR_NO_SPACE       = -11011,
 
-    RC_CDBM_SYNTAX_ERROR       = -11011,
-    RC_CDBM_VALIDAT_ERROR      = -11012,
+    RC_CDBM_SYNTAX_ERROR       = -11012,
+    RC_CDBM_VALIDAT_ERROR      = -11013,
 } T_global_rc;
 
 #endif /* CDBM_RET_CODE_H */

@@ -10,9 +10,11 @@
 #include "aat-incl.h"
 
 #include "cdbm-lib.h"
-#include "cdbm-db.h"
-#include "cdbm-config-model.h"
+#include "cdbm-types.h"
+#include "cdbm-data-model.h"
+//#include "cdbm-config-model.h"
 
+#include "cdbm-test.h"
 
 /**************************************************************************************************
  ******               the following is CDBM configuration type definition                    ******

@@ -10,3 +10,10 @@ do {                                    \
         printf(_strArgs);               \
         printf("\n");                   \
 }  while (0)
+
+
+#define CDBM_RET_IF_FAIL(ret_cod)  \
+do {                            \
+    if (ret_cod != RC_OK)       \
+        return ret_cod;         \
+} while (0)

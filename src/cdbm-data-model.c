@@ -10,8 +10,10 @@
 
 #include "cdbm-lib.h"
 #include "cdbm-event.h"
-#include "cdbm-db.h"
-#include "cdbm-config-model.h"
+#include "cdbm-types.h"
+#include "cdbm-data-model.h"
+
+#include "cdbm-global-data.h"
 
 /* TODO init phase, validate the parameter tree
  *      - (done) xpath is correct
@@ -28,8 +30,8 @@ void cdbm_cm_attach_data(T_cdbm_dm_node *_node, T_cdbm_dm_typedef *_typedef)
     AAT_STD_ASSERT(_typedef != NULL);
     AAT_STD_ASSERT(_node);
 
-    g_cdbm_db.cm_node = _node;
-    g_cdbm_db.cm_typedef = _typedef;
+    g_cdbm_data.dm_node = _node;
+    g_cdbm_data.dm_typedef = _typedef;
 }
 
 static inline bool cdbm_cm_node_idx_is_valid(T_cdbm_dm_node_idx node_idx)
@@ -37,7 +39,6 @@ static inline bool cdbm_cm_node_idx_is_valid(T_cdbm_dm_node_idx node_idx)
     return node_idx != CDBM_CM_INVALID_IDX;
 }
 
-extern struct T_cdbm_db_data g_cdbm_db;
 
 static inline T_cdbm_dm_node* cdbm_cm_get_node_from_id(T_cdbm_dm_node_idx node_idx)
 {
@@ -47,13 +48,13 @@ static inline T_cdbm_dm_node* cdbm_cm_get_node_from_id(T_cdbm_dm_node_idx node_i
 
     //if (!cdbm_cm_node_idx)
 
-    return  g_cdbm_db.cm_node + node_idx;
+    return  g_cdbm_data.dm_node + node_idx;
 }
 
 T_cdbm_dm_node* cdbm_dm_get_node_from_keypath(const char* key_path)
 {
     T_cdbm_dm_node *cm_node;
-    HASH_FIND_STR(g_cdbm_db.cm_node_hash, key_path, cm_node);
+    HASH_FIND_STR(g_cdbm_data.dm_node_hash, key_path, cm_node);
 
     return cm_node;
 }
@@ -161,7 +162,7 @@ T_global_rc cdbm_dm_node_walk(T_cdbm_dm_node_ops *node_ops)
 {
     //T_cdbm_cm_node *cur_node, *parent_node;
 
-    return cdbm_cm_node_walk_one_node(&g_cdbm_db.cm_node[0], node_ops);
+    return cdbm_cm_node_walk_one_node(&g_cdbm_data.dm_node[0], node_ops);
 
     //return RC_OK;
 }
@@ -181,7 +182,7 @@ T_global_rc cdbm_cm_node_init(T_cdbm_dm_node* cm_node)
     char key_path[CDBM_MAX_KEYPATH_LEN];
 
     memset(&cm_node->hh, 0, sizeof(UT_hash_handle));
-    HASH_ADD_KEYPTR(hh, g_cdbm_db.cm_node_hash, cm_node->key_path, strlen(cm_node->key_path), cm_node);
+    HASH_ADD_KEYPTR(hh, g_cdbm_data.dm_node_hash, cm_node->key_path, strlen(cm_node->key_path), cm_node);
 
     if (strlen(cm_node->key_path) >= CDBM_MAX_KEYPATH_LEN) {
         AAT_FMT_ASSERT(0, ("key_path too long(%d)(%s)", strlen(cm_node->key_path), cm_node->key_path));
@@ -234,7 +235,7 @@ T_global_rc cdbm_dm_init()
         cdbm_cm_node_init,        NULL
     };
 
-    g_cdbm_db.cm_node_hash = NULL;
+    g_cdbm_data.dm_node_hash = NULL;
     ret_cod = cdbm_dm_node_walk(&node_ops);
     CDBM_RET_IF_FAIL(ret_cod);
 

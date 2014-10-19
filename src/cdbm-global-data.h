@@ -18,13 +18,13 @@ typedef struct T_cdbm_global_data
     T_gfi_lock       trans_list_lock;
 
 
-    /* the following is global data for configuration model */
-    T_cdbm_dm_typedef *cm_typedef;
-    T_cdbm_dm_node *cm_node;
-    T_cdbm_dm_node *cm_node_hash;
+    /* the following is global data for data model */
+    T_cdbm_dm_typedef *dm_typedef;
+    T_cdbm_dm_node *dm_node;
+    T_cdbm_dm_node *dm_node_hash;
 } T_cdbm_global_data;
 
-extern T_cdbm_global_data g_cdbm_db;
+extern T_cdbm_global_data g_cdbm_data;
 
 
 

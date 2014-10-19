@@ -6,9 +6,13 @@
 
 #include "aat-incl.h"
 #include "cdbm-lib.h"
-#include "cdbm-db.h"
 
-T_cdbm_global_data g_cdbm_db;
+#include "cdbm-types.h"
+#include "cdbm-data-model.h"
+#include "cdbm-global-data.h"
+
+
+T_cdbm_global_data g_cdbm_data;
 
 void cdbm_lib_init(int phase)
 {

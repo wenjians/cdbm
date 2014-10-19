@@ -7,10 +7,14 @@
 #include "vunit.h"
 
 #include "gfi-list.h"
-#include "cdbm-lib.h"
-#include "cdbm-db.h"
-#include "cdbm-types.h"
 
+#include "cdbm-lib.h"
+#include "cdbm-types.h"
+#include "cdbm-data-model.h"
+#include "cdbm-global-data.h"
+
+
+#include "cdbm-test.h"
 #include "cdbm-test-client.h"
 
 /***************************************************************************
@@ -21,6 +25,7 @@ int main();
 extern T_cdbm_dm_typedef cdbm_test_cm_typedef[];
 extern T_cdbm_dm_node cdbm_test_cm_node[] ;
 
+#if 0
 static int cdbm_test_misc_lib();
 static int cdbm_test_transaction();
 static int cdbm_test_set_value() ;
@@ -28,15 +33,18 @@ static int cdbm_test_mo_leaf();
 static int cdbm_test_mo_group();
 static int cdbm_test_cm_hash_search();
 T_global_rc cdbm_cm_test_printall();
+#endif
 
-VTestCase cdbm_test_cases[] = {
+VTestCase cdbm_test_cases[] = {    
+    DEF_TEST_CASE(cdbm_test_uint32),
+    /*
     DEF_TEST_CASE(cdbm_test_misc_lib),
     DEF_TEST_CASE(cdbm_test_transaction),
     DEF_TEST_CASE(cdbm_test_set_value),
     DEF_TEST_CASE(cdbm_test_mo_leaf),
     DEF_TEST_CASE(cdbm_test_mo_group),
     DEF_TEST_CASE(cdbm_test_cm_hash_search),
-
+    */
 
     // add one line before here for every test case
     {NULL, NULL} // don't remove, end of array!
@@ -99,6 +107,7 @@ T_global_rc cdbm_test_print_exit_container(T_cdbm_dm_node* cm_node)
     return RC_OK;
 }
 
+#if 0
 T_global_rc cdbm_cm_test_printall()
 {
     T_cdbm_dm_node_ops node_ops = {
@@ -416,3 +425,5 @@ static int cdbm_test_cm_hash_search()
 
     return 0;
 }
+#endif
+

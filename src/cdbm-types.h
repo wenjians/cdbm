@@ -4,22 +4,9 @@
 
 #include "aat-types.h"
 
-typedef enum T_cdbm_vtype {
-    CDBM_TYPE_EMPTY         =  0,
-    CDBM_TYPE_UINT32        =  1,
-    CDBM_TYPE_INT32         =  2,
-    CDBM_TYPE_IPV4          =  3,
-    CDBM_TYPE_IPV6          =  4,
-    CDBM_TYPE_IPADDR        =  5,
-    CDBM_TYPE_MAC           =  6,
-    CDBM_TYPE_HEX           =  7,
-    CDBM_TYPE_STRING        =  8,
-    CDBM_TYPE_STR_WORD      =  9,
-    CDBM_TYPE_BOOL          = 10,
-    CDBM_TYPE_ENUM_HASH     = 11,
-    CDBM_TYPE_BUF           = 12,
-    CDBM_TYPE_MAX,                  /* MAX type value definition */
-} T_cdbm_vtype;
+#include "cdbm-data-model.h"
+
+
 
 
 typedef struct T_cdbm_buf {
@@ -31,6 +18,7 @@ typedef struct T_cdbm_enum {
     int32 int_val;
     uchar8 *str_val;
 } T_cdbm_enum;
+
 typedef struct T_cdbm_value {
     T_cdbm_vtype type;    /* the data types */
     union {
@@ -46,6 +34,36 @@ typedef struct T_cdbm_value {
         T_cdbm_enum enum_val;
     } val;
 } T_cdbm_value;
+
+
+
+
+
+extern bool cdbm_uint32_val_eq(const T_cdbm_value *v1, const T_cdbm_value *v2);
+extern T_global_rc cdbm_uint32_to_str(const T_cdbm_value *val, char *buf, uint32 len);
+extern T_global_rc cdbm_str_to_uint32(const T_cdbm_dm_type *type, const char *str, T_cdbm_value *val);
+extern T_global_rc cdbm_uint32_validate(const T_cdbm_dm_type *type, const T_cdbm_value *val);
+
+
+
+
+typedef bool (*T_cmdb_val_eq)(const T_cdbm_value* v1, const T_cdbm_value* v2);
+typedef T_global_rc (*T_cdbm_val_to_str)(const T_cdbm_value *val, char *buf, uint32 len);
+typedef T_global_rc (*T_cdbm_str_to_val)(const T_cdbm_dm_type *type, const char *str, T_cdbm_value *val);
+typedef T_global_rc (*T_cdbm_val_valid)(const T_cdbm_dm_type *type, const T_cdbm_value *val);
+
+
+typedef struct T_cdbm_val_opt {
+    T_cdbm_vtype  val_type;
+    T_cmdb_val_eq val_eq;
+    T_cdbm_val_to_str val_to_str;
+    T_cdbm_str_to_val str_to_val;
+    T_cdbm_val_valid  val_valid;
+} T_cdbm_val_opt;
+
+
+extern T_cdbm_val_opt g_cdbm_val_ops[CDBM_TYPE_MAX];
+
 
 
 

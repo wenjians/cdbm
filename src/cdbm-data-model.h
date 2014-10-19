@@ -4,12 +4,29 @@
 
 #include "uthash.h"
 
-#include "cdbm-db.h"
 #include "cdbm-types.h"
 
 #define CDBM_CM_INVALID_IDX -1
 typedef int32   T_cdbm_dm_node_idx;
 
+
+
+typedef enum T_cdbm_vtype {
+    CDBM_TYPE_EMPTY         =  0,
+    CDBM_TYPE_UINT32        =  1,
+    CDBM_TYPE_INT32         =  2,
+    CDBM_TYPE_IPV4          =  3,
+    CDBM_TYPE_IPV6          =  4,
+    CDBM_TYPE_IPADDR        =  5,
+    CDBM_TYPE_MAC           =  6,
+    CDBM_TYPE_HEX           =  7,
+    CDBM_TYPE_STRING        =  8,
+    CDBM_TYPE_STR_WORD      =  9,
+    CDBM_TYPE_BOOL          = 10,
+    CDBM_TYPE_ENUM_HASH     = 11,
+    CDBM_TYPE_BUF           = 12,
+    CDBM_TYPE_MAX,                  /* MAX type value definition */
+} T_cdbm_vtype;
 
 
 /* it is definition of CDBM configuration paraemter model */
@@ -44,14 +61,14 @@ typedef struct T_cdbm_dm_leaf_list
     uint32 min_element;
     uint32 max_element;
     uint32 ordered_by;
-    struct T_cdbm_cm_type *data_type;
+    struct T_cdbm_dm_type *data_type;
 } T_cdbm_dm_leaf_list;
 
 typedef struct T_cdbm_dm_leaf
 {
     const char* def_value;
     bool mandatory;
-    struct T_cdbm_cm_type *data_type;
+    struct T_cdbm_dm_type *data_type;
 } T_cdbm_dm_leaf;
 
 
