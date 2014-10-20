@@ -52,12 +52,23 @@ extern T_global_rc cdbm_int32_validate(const T_cdbm_dm_type *type, const T_cdbm_
 
 
 
+bool cdbm_ipv4_val_eq(const T_cdbm_value *v1, const T_cdbm_value *v2);
+T_global_rc cdbm_str_to_ipv4(const T_cdbm_dm_type *type, const char *str, T_cdbm_value *val);
+T_global_rc cdbm_ipv4_to_str(const T_cdbm_value *val, char *str, uint32 len);
+T_global_rc cdbm_ipv4_validate(const T_cdbm_dm_type *type, const T_cdbm_value *val);
 
 
 
+bool cdbm_ipv6_val_eq(const T_cdbm_value *v1, const T_cdbm_value *v2);
+T_global_rc cdbm_str_to_ipv6(const T_cdbm_dm_type *type, const char *str, T_cdbm_value *val);
+T_global_rc cdbm_ipv6_to_str(const T_cdbm_value *val, char *str, uint32 len);
+T_global_rc cdbm_ipv6_validate(const T_cdbm_dm_type *type, const T_cdbm_value *val);
 
 
-
+bool cdbm_ipng_val_eq(const T_cdbm_value *v1, const T_cdbm_value *v2);
+T_global_rc cdbm_str_to_ipng(const T_cdbm_dm_type *type, const char *str, T_cdbm_value *val);
+T_global_rc cdbm_ipng_to_str(const T_cdbm_value *val, char *str, uint32 len);
+T_global_rc cdbm_ipng_validate(const T_cdbm_dm_type *type, const T_cdbm_value *val);
 
 
 

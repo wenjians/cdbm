@@ -8,6 +8,6 @@
 extern int cdbm_test_range();
 extern int cdbm_test_uint32();
 extern int cdbm_test_int32();
-
+extern int cdbm_test_ipaddress();
 
 #endif /* _CDBM_TEST_H_ */

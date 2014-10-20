@@ -73,6 +73,17 @@ do {\
 }while(0)
 
 
+// assert string comparation
+#define VASSERT_IEQ_STR(expect, actual) \
+do {\
+    if(stricmp(expect, actual)!=0) {\
+        VUNIT_PRINTF("%s(%d): expect<%s>, but was<%s>\n", \
+            __FUNCTION__, __LINE__, expect, actual);\
+        return -1;\
+    }\
+}while(0)
+
+
 // maybe you need more assert, for example assert_str_equal, but it make vunit dependent on 
 // other library, sometimes it is not always available, but we can overcome it by a simple trick,
 // for example, use

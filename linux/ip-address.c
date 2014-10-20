@@ -107,7 +107,7 @@ T_global_rc ipng_get_addr_from_str(const char *buf, T_global_IPNG_ADDR *ipng_add
 }
 
 
-uint32 ipng_is_addr_equal(T_global_IPNG_ADDR *addr1, T_global_IPNG_ADDR *addr2)
+uint32 ipng_is_addr_equal(const T_global_IPNG_ADDR *addr1, const T_global_IPNG_ADDR *addr2)
 {
     if (addr1->ipVer != addr2->ipVer)
         return 0;

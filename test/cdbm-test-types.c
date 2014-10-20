@@ -7,6 +7,7 @@
 #include "cdbm-test.h"
 
 
+#define CDBM_TEST_BUF_LEN 128
 
 int cdbm_test_range()
 {
@@ -77,8 +78,7 @@ int cdbm_test_range()
 
 int cdbm_test_uint32()
 {
-#define CDBM_TEST_UINT32_BUF_LEN 128    
-    char buffer[CDBM_TEST_UINT32_BUF_LEN];
+    char buffer[CDBM_TEST_BUF_LEN];
     T_cdbm_value v1, v2;
     T_global_rc  ret_cod;
     T_cdbm_val_opt *val_opt;
@@ -107,7 +107,7 @@ int cdbm_test_uint32()
     VASSERT_EQ(CDBM_TYPE_UINT32, v2.type);
     VASSERT_EQ(10, v2.val.u32);
     
-    ret_cod = val_opt->val_to_str(&v1, buffer, CDBM_TEST_UINT32_BUF_LEN);
+    ret_cod = val_opt->val_to_str(&v1, buffer, CDBM_TEST_BUF_LEN);
     VASSERT_EQ(RC_OK, ret_cod);
     VASSERT_EQ_STR("10", buffer);
 
@@ -163,7 +163,7 @@ int cdbm_test_uint32()
 
     v1.type = CDBM_TYPE_UINT32;
     v1.val.u32 = 1000;
-    ret_cod = val_opt->val_to_str(&v1, buffer, CDBM_TEST_UINT32_BUF_LEN);
+    ret_cod = val_opt->val_to_str(&v1, buffer, CDBM_TEST_BUF_LEN);
     VASSERT_EQ(RC_OK, ret_cod);
     VASSERT_EQ_STR("1000", buffer);
     ret_cod = val_opt->val_to_str(&v1, buffer, 3);
@@ -180,12 +180,9 @@ int cdbm_test_uint32()
     return 0;    
 }
 
-
-
 int cdbm_test_int32()
 {
-#define CDBM_TEST_UINT32_BUF_LEN 128
-    char buffer[CDBM_TEST_UINT32_BUF_LEN];
+    char buffer[CDBM_TEST_BUF_LEN];
     T_cdbm_value v1, v2;
     T_global_rc  ret_cod;
     T_cdbm_val_opt *val_opt;
@@ -213,7 +210,7 @@ int cdbm_test_int32()
     VASSERT_EQ(CDBM_TYPE_INT32, v2.type);
     VASSERT_EQ(10, v2.val.i32);
 
-    ret_cod = val_opt->val_to_str(&v1, buffer, CDBM_TEST_UINT32_BUF_LEN);
+    ret_cod = val_opt->val_to_str(&v1, buffer, CDBM_TEST_BUF_LEN);
     VASSERT_EQ(RC_OK, ret_cod);
     VASSERT_EQ_STR("-10", buffer);
 
@@ -270,7 +267,7 @@ int cdbm_test_int32()
 
     v1.type = CDBM_TYPE_INT32;
     v1.val.u32 = 1000;
-    ret_cod = val_opt->val_to_str(&v1, buffer, CDBM_TEST_UINT32_BUF_LEN);
+    ret_cod = val_opt->val_to_str(&v1, buffer, CDBM_TEST_BUF_LEN);
     VASSERT_EQ(RC_OK, ret_cod);
     VASSERT_EQ_STR("1000", buffer);
     ret_cod = val_opt->val_to_str(&v1, buffer, 3);
@@ -282,7 +279,7 @@ int cdbm_test_int32()
 
     v1.type = CDBM_TYPE_INT32;
     v1.val.u32 = -1000;
-    ret_cod = val_opt->val_to_str(&v1, buffer, CDBM_TEST_UINT32_BUF_LEN);
+    ret_cod = val_opt->val_to_str(&v1, buffer, CDBM_TEST_BUF_LEN);
     VASSERT_EQ(RC_OK, ret_cod);
     VASSERT_EQ_STR("-1000", buffer);
     ret_cod = val_opt->val_to_str(&v1, buffer, 4);
@@ -291,6 +288,130 @@ int cdbm_test_int32()
     ret_cod = val_opt->val_to_str(&v1, buffer, 2);
     VASSERT_EQ(RC_OK, ret_cod);
     VASSERT_EQ_STR("-", buffer);
+
+    // 3. Verify
+
+    // 4. Teardown
+
+    return 0;
+}
+
+
+int cdbm_test_ipaddress()
+{
+
+    char buffer[CDBM_TEST_BUF_LEN];
+    T_cdbm_value v1, v2;
+    T_global_rc  ret_cod;
+    T_cdbm_val_opt *val_opt;
+    T_cdbm_dm_type dm_type;
+
+    // a typical unit test include 4 steps.
+    // 1. Setup
+
+
+    // 2. Execute
+
+    /* the following is test IPv4 */
+    dm_type.type_def_id = 2;
+    dm_type.base_type = CDBM_TYPE_IPV4;
+    val_opt = &g_cdbm_val_ops[CDBM_TYPE_IPV4];
+    ret_cod = val_opt->str_to_val(&dm_type, "10.10.0.1", &v1);
+    VASSERT_EQ(RC_OK, ret_cod);
+    VASSERT_EQ(CDBM_TYPE_IPV4, v1.type);
+    v2.val.ipv4.S_addr = 0x1000a0a;
+    //printf("ipv4 val=0x%x\n", v1.val.ipv4.S_addr);
+    VASSERT_TRUE(ip4_is_addr_equal(v1.val.ipv4, v2.val.ipv4));
+
+    ret_cod = val_opt->str_to_val(&dm_type, "256.10.0.1", &v1);
+    VASSERT_EQ(RC_CDBM_INVALID_IP_ADDR, ret_cod);
+    ret_cod = val_opt->str_to_val(&dm_type, "20.10.0.287", &v1);
+    VASSERT_EQ(RC_CDBM_INVALID_IP_ADDR, ret_cod);
+    ret_cod = val_opt->str_to_val(&dm_type, "25A.10.0.1", &v1);
+    VASSERT_EQ(RC_CDBM_INVALID_IP_ADDR, ret_cod);
+    ret_cod = val_opt->str_to_val(&dm_type, "24.10.Y0.1", &v1);
+    VASSERT_EQ(RC_CDBM_INVALID_IP_ADDR, ret_cod);
+
+    memset(buffer, 0, sizeof(buffer));
+    ret_cod = val_opt->str_to_val(&dm_type, "192.168.0.1", &v1);
+    VASSERT_EQ(RC_OK, ret_cod);
+    ret_cod = val_opt->val_to_str(&v1, buffer, CDBM_TEST_BUF_LEN);
+    VASSERT_EQ(RC_OK, ret_cod);
+    VASSERT_EQ_STR("192.168.0.1", buffer);
+    memset(buffer, 0, sizeof(buffer));
+    ret_cod = val_opt->val_to_str(&v1, buffer, 10);
+    VASSERT_EQ(RC_CDBM_STR_NO_SPACE, ret_cod);
+    VASSERT_EQ_STR("", buffer);
+    memset(buffer, 0, sizeof(buffer));
+    ret_cod = val_opt->val_to_str(&v1, buffer, 4);
+    VASSERT_EQ(RC_CDBM_STR_NO_SPACE, ret_cod);
+    VASSERT_EQ_STR("", buffer);
+
+
+
+    /* the following is test IPv6 */
+    dm_type.type_def_id = 3;
+    dm_type.base_type = CDBM_TYPE_IPV6;
+    val_opt = &g_cdbm_val_ops[CDBM_TYPE_IPV6];
+
+    memset(buffer, 0, sizeof(buffer));
+    ret_cod = val_opt->str_to_val(&dm_type, "ff01::1", &v1);
+    VASSERT_EQ(RC_OK, ret_cod);
+    ret_cod = val_opt->val_to_str(&v1, buffer, CDBM_TEST_BUF_LEN);
+    VASSERT_EQ(RC_OK, ret_cod);
+    VASSERT_EQ_STR("ff01::1", buffer);
+
+
+    memset(buffer, 0, sizeof(buffer));
+    ret_cod = val_opt->val_to_str(&v1, buffer, 6);
+    VASSERT_EQ(RC_CDBM_STR_NO_SPACE, ret_cod);
+    VASSERT_EQ_STR("", buffer);
+
+    ret_cod = val_opt->str_to_val(&dm_type, "ff01:22222:1", &v1);
+    VASSERT_EQ(RC_CDBM_INVALID_IP_ADDR, ret_cod);
+    ret_cod = val_opt->str_to_val(&dm_type, "ff01:22xf:1", &v1);
+    VASSERT_EQ(RC_CDBM_INVALID_IP_ADDR, ret_cod);
+
+    ret_cod = val_opt->str_to_val(&dm_type, "ff01::1", &v1);
+    VASSERT_EQ(RC_OK, ret_cod);
+    ret_cod = val_opt->str_to_val(&dm_type, "ff01:0:0::1", &v2);
+    VASSERT_EQ(RC_OK, ret_cod);
+    VASSERT_TRUE(ip6_is_addr_equal(&v1.val.ipv6, &v2.val.ipv6));
+
+
+    /* the following is test IPNG */
+    memset(buffer, 0, sizeof(buffer));
+    dm_type.type_def_id = 4;
+    dm_type.base_type = CDBM_TYPE_IPADDR;
+    val_opt = &g_cdbm_val_ops[CDBM_TYPE_IPADDR];
+
+
+    ret_cod = val_opt->str_to_val(&dm_type, "10.10.0.1", &v1);
+    VASSERT_EQ(RC_OK, ret_cod);
+    ret_cod = val_opt->val_to_str(&v1, buffer, CDBM_TEST_BUF_LEN);
+    VASSERT_EQ(RC_OK, ret_cod);
+    VASSERT_EQ_STR("10.10.0.1", buffer);
+    v2.type = CDBM_TYPE_IPADDR;
+    v2.val.ip_addr.ipVer = IP_VERSION_4;
+    v2.val.ip_addr.u.ip4.S_addr = 0x1000a0a;
+    VASSERT_TRUE(val_opt->val_eq(&v1, &v2));
+
+
+    memset(buffer, 0, sizeof(buffer));
+    ret_cod = val_opt->str_to_val(&dm_type, "ff01::2", &v1);
+    VASSERT_EQ(RC_OK, ret_cod);
+    ret_cod = val_opt->val_to_str(&v1, buffer, CDBM_TEST_BUF_LEN);
+    VASSERT_EQ(RC_OK, ret_cod);
+    VASSERT_EQ_STR("ff01::2", buffer);
+    /*
+    v2.type = CDBM_TYPE_IPADDR;
+    v2.val.ip_addr.ipVer = IP_VERSION_6;
+    v2.val.ip_addr.u.ip6.s6_u32[0] = 0x01ff;
+    v2.val.ip_addr.u.ip6.s6_u32[1] = 0;
+    v2.val.ip_addr.u.ip6.s6_u32[2] = 0;
+    v2.val.ip_addr.u.ip6.s6_u32[3] = 2;
+    VASSERT_TRUE(val_opt->val_eq(&v1, &v2));
+    */
 
     // 3. Verify
 

@@ -90,7 +90,7 @@ typedef struct {
 
 } T_global_IPNG_ADDR;
 
-uint32 ipng_is_addr_equal(T_global_IPNG_ADDR *addr1, T_global_IPNG_ADDR *addr2);
+uint32 ipng_is_addr_equal(const T_global_IPNG_ADDR *addr1, const T_global_IPNG_ADDR *addr2);
 
 char* snprintIp4a(char *buf, uint32 len, const T_global_IP_ADDR *ip4_addr);
 char* snprintIp6a(char *buf, uint32 len, const T_global_IP6_ADDR *ip6_addr);
