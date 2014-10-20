@@ -36,7 +36,12 @@ T_global_rc cdbm_cm_test_printall();
 #endif
 
 VTestCase cdbm_test_cases[] = {    
+
+    DEF_TEST_CASE(cdbm_test_range),
     DEF_TEST_CASE(cdbm_test_uint32),
+    DEF_TEST_CASE(cdbm_test_int32),
+
+
     /*
     DEF_TEST_CASE(cdbm_test_misc_lib),
     DEF_TEST_CASE(cdbm_test_transaction),

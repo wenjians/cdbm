@@ -24,6 +24,12 @@
 
 static int cdbm_type_get_base(const char* token)
 {
+    /* skip the preceding space or minus (-) */
+    while (*token && isspace(*token))
+        token++;
+    if (*token == '-')
+        token++;
+
     if (strlen(token)<2)
         return 10 ;
     if (token[0] == '0' && tolower(token[1])== 'x')
@@ -37,7 +43,8 @@ T_cdbm_val_opt g_cdbm_val_ops[CDBM_TYPE_MAX] = {
 
     /* val_type         val_eq,             val_to_str,         str_to_val,         val_valid           */
     {CDBM_TYPE_EMPTY,   NULL,               NULL,               NULL,               NULL                },
-    {CDBM_TYPE_UINT32,  cdbm_uint32_val_eq, cdbm_uint32_to_str, cdbm_str_to_uint32, cdbm_uint32_validate}
+    {CDBM_TYPE_UINT32,  cdbm_uint32_val_eq, cdbm_uint32_to_str, cdbm_str_to_uint32, cdbm_uint32_validate},
+    {CDBM_TYPE_INT32,   cdbm_int32_val_eq,  cdbm_int32_to_str,  cdbm_str_to_int32,  cdbm_int32_validate }
 
     /*
     CDBM_TYPE_EMPTY         =  0,
@@ -99,14 +106,22 @@ T_global_rc cdbm_str_to_uint32(const T_cdbm_dm_type *type, const char *str, T_cd
 }
 
 
-// TODO uint32 validation
 T_global_rc cdbm_uint32_validate(const T_cdbm_dm_type *type, const T_cdbm_value *val)
 {
+    if (val->type != CDBM_TYPE_UINT32)
+        return RC_CDBM_INVALID_TYPE ;
+
+    if (type->base_type != CDBM_TYPE_UINT32)
+        return RC_CDBM_INVALID_TYPE ;
+
+    if (!cdbm_val_uint32_in_range(val->val.u32, type->type.t_int.range))
+        return RC_CDBM_INVALID_RANGE;
+
     return RC_OK;
 }
 
 
-#if 0
+
 /******************************************************************************
  *  the following is types for "int32"
  *****************************************************************************/
@@ -122,7 +137,7 @@ T_global_rc cdbm_int32_to_str(const T_cdbm_value *val, char *buf, uint32 len)
 {
     AAT_STD_ASSERT(buf != NULL);
 
-    snprintf(buf, len, "%ld", val->val.i32);
+    snprintf(buf, len, "%d", val->val.i32);
 
     return RC_OK;
 }
@@ -132,13 +147,10 @@ T_global_rc cdbm_str_to_int32(const T_cdbm_dm_type *type, const char *str, T_cdb
     char* pend=NULL;
     T_global_rc ret_code;
 
-    uint32 i32 = strtol(str, &pend, cdbm_type_get_base(str));
+    int32 i32 = strtol(str, &pend, cdbm_type_get_base(str));
     if (!isspace(*pend) && (*pend)) {
         return RC_CDBM_INVALID_STRING;
     }
-
-    ret_code = cdbm_int32_validate(type, val);
-    CDBM_RET_IF_FAIL(ret_code);
 
     val->type = CDBM_TYPE_INT32;
     val->val.i32 = i32;
@@ -150,15 +162,24 @@ T_global_rc cdbm_str_to_int32(const T_cdbm_dm_type *type, const char *str, T_cdb
 }
 
 
-// TODO  int32 validation
+
 T_global_rc cdbm_int32_validate(const T_cdbm_dm_type *type, const T_cdbm_value *val)
 {
+    if (val->type != CDBM_TYPE_INT32)
+        return RC_CDBM_INVALID_TYPE ;
+
+    if (type->base_type != CDBM_TYPE_INT32)
+        return RC_CDBM_INVALID_TYPE ;
+
+    if (!cdbm_val_int32_in_range(val->val.i32, type->type.t_int.range))
+        return RC_CDBM_INVALID_RANGE;
+
     return RC_OK;
 }
 
 
 
-
+#if 0
 /******************************************************************************
  *  the following is types for "ipv4"
  *****************************************************************************/
@@ -386,22 +407,116 @@ void cdbm_free_dup_value(T_cdbm_value *val)
 
 
 /* the following is used for range check */
-bool cdbm_val_get_next_range(const char* range_list, char* one_range, uint32 max_len)
+
+const char* cdbm_val_range_get_next_number(const char* buffer, char* token, uint32 max_len)
+{
+    const char* src = buffer;
+    char* dst = token;
+
+    // skip the leading space
+    while (*src && isspace(*src))
+        src++;
+
+    for (; *src && (!isspace(*src)) && (*src!='.') && (*src!='|') && (max_len-1>0); max_len--) {
+        *dst++ = *src++;
+    }
+
+    while (*src && isspace(*src))
+        src++;
+
+    *dst = '\0';
+    return src;
+}
+
+const char* cdbm_val_get_next_one_range(const char* range_string, char* min, char*max, uint32 max_len)
 {
 
+    const char* cur_pos = range_string;
+
+    cur_pos = cdbm_val_range_get_next_number(cur_pos, min, max_len);
+    if (*cur_pos == '.')
+    {
+        while (*cur_pos == '.')
+            cur_pos++;
+
+        cur_pos = cdbm_val_range_get_next_number(cur_pos, max, max_len);
+    }
+    else
+    {
+        strcpy(max, min);
+    }
+
+    if (*cur_pos == '|')
+        cur_pos++;
+
+    return cur_pos;
 }
-bool cdbm_int32_val_in_range(int32 val, const char* range_list)
+
+
+bool cdbm_val_uint32_in_range(uint32 val, const char* range_string)
 {
-    char one_range[128];
+    char min_val_str[128], max_val_str[128];
+    uint32 max_val, min_val;
+    const char* cur_pos = range_string;
+    char* pend=NULL;
+
+    //CDBM_DEBUG(("range_list=<%s>\n", range_list));
+    while (*cur_pos) {
+        cur_pos = cdbm_val_get_next_one_range(cur_pos, min_val_str, max_val_str, 127);
+        min_val = strtoul(min_val_str, &pend, cdbm_type_get_base(min_val_str));
+        max_val = strtoul(max_val_str, &pend, cdbm_type_get_base(max_val_str));
+
+        /* the range list is sorted from small to big, if it already smaller than
+         * minimal value, it must be failure
+         */
+        if (val < min_val)
+            return false;
+
+        if ((val >= min_val) && (val <= max_val))
+        {
+            /*
+            CDBM_DEBUG(("source value<%u>, range_list=<%s>, hit range<%s, %s>\n",
+                    val, range_string, min_val_str, max_val_str));
+            */
+            return true;
+        }
+    }
 
     return false;
 }
 
-bool cdbm_uint32_val_in_range(int32 val, const char* range_list)
+
+bool cdbm_val_int32_in_range(int32 val, const char* range_string)
 {
-    char one_range[128];
+    char min_val_str[128], max_val_str[128];
+    int32 max_val, min_val;
+    const char* cur_pos = range_string;
+    char* pend=NULL;
+
+    //CDBM_DEBUG(("range_list=<%s>\n", range_list));
+    while (*cur_pos) {
+        cur_pos = cdbm_val_get_next_one_range(cur_pos, min_val_str, max_val_str, 127);
+        min_val = strtol(min_val_str, &pend, cdbm_type_get_base(min_val_str));
+        max_val = strtol(max_val_str, &pend, cdbm_type_get_base(max_val_str));
+
+        /* the range list is sorted from small to big, if it already smaller than
+         * minimal value, it must be failure
+         */
+        if (val < min_val)
+            return false;
+
+        if ((val >= min_val) && (val <= max_val))
+        {
+            /*
+            CDBM_DEBUG(("source value<%d>, range_list=<%s>, hit range<%s, %s>\n",
+                    val, range_string, min_val_str, max_val_str));
+            */
+            return true;
+        }
+    }
 
     return false;
 }
+
 
 

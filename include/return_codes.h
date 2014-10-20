@@ -22,6 +22,7 @@ typedef enum T_global_rc {
 
     RC_CDBM_INVALID_STRING     = -11009,
     RC_CDBM_INVALID_RANGE      = -11010,
+    RC_CDBM_INVALID_TYPE       = -11014,
     RC_CDBM_STR_NO_SPACE       = -11011,
 
     RC_CDBM_SYNTAX_ERROR       = -11012,

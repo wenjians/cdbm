@@ -5,6 +5,11 @@
 
 #define CDBM_EVT_ERROR  0
 
+
+#define CDBM_DEBUG(x)  printf x
+//#define CDBM_DEBUG(x)  do {} while(0)
+
+
 #define CDBM_LOG(level, _strArgs ...)   \
 do {                                    \
         printf(_strArgs);               \

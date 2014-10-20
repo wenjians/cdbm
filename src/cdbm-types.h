@@ -37,12 +37,27 @@ typedef struct T_cdbm_value {
 
 
 
-
+bool cdbm_val_uint32_in_range(uint32 val, const char* range_string);
+bool cdbm_val_int32_in_range(int32 val, const char* range_string);
 
 extern bool cdbm_uint32_val_eq(const T_cdbm_value *v1, const T_cdbm_value *v2);
 extern T_global_rc cdbm_uint32_to_str(const T_cdbm_value *val, char *buf, uint32 len);
 extern T_global_rc cdbm_str_to_uint32(const T_cdbm_dm_type *type, const char *str, T_cdbm_value *val);
 extern T_global_rc cdbm_uint32_validate(const T_cdbm_dm_type *type, const T_cdbm_value *val);
+
+extern bool cdbm_int32_val_eq(const T_cdbm_value *v1, const T_cdbm_value *v2);
+extern T_global_rc cdbm_int32_to_str(const T_cdbm_value *val, char *buf, uint32 len);
+extern T_global_rc cdbm_str_to_int32(const T_cdbm_dm_type *type, const char *str, T_cdbm_value *val);
+extern T_global_rc cdbm_int32_validate(const T_cdbm_dm_type *type, const T_cdbm_value *val);
+
+
+
+
+
+
+
+
+
 
 
 

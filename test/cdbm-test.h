@@ -5,8 +5,9 @@
 
 
 /* the following will test different value types */
+extern int cdbm_test_range();
 extern int cdbm_test_uint32();
-
+extern int cdbm_test_int32();
 
 
 #endif /* _CDBM_TEST_H_ */
