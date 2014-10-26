@@ -23,11 +23,7 @@ typedef struct T_cdbm_trans {
 typedef struct T_cdbm_trans* T_cdbm_trans_id;
 #define CDBM_TRANSACTION_SIZE sizeof(T_cdbm_trans)
 
-/* maximum key path for each node, which include all the parents
- *   e.g. /syslog/speed
- */
-#define CDBM_MAX_KEYPATH_LEN    256
-#define CDBM_MAX_NONSTR_LEN      64
+
 
 T_global_rc cdbm_set_uint32(T_cdbm_trans_id cdbm_id, const uint32 val, const char* fmt, ...);
 T_global_rc cdbm_set_int32(T_cdbm_trans_id cdbm_id, const int32 val, const char* fmt, ...);
@@ -49,8 +45,8 @@ T_global_rc cdbm_get_string(T_cdbm_trans_id trans_id, char*buffer, uint32 max_le
  *  CDBM transaction related function
  */
 void cdbm_trans_init();
-T_cdbm_trans_id cdbm_create_transaction(char* trans_name);
-T_global_rc cdbm_close_transaction(T_cdbm_trans_id cdbm_trans);
+T_cdbm_trans_id cdbm_trans_create(char* trans_name);
+T_global_rc cdbm_trans_delete(T_cdbm_trans_id cdbm_trans);
 
 T_global_rc cdbm_subscribe(const char* name_space, const char *fmt, ...);
 T_global_rc cdbm_unsubscribe(const char* name_space, const char *fmt, ...);
@@ -59,6 +55,10 @@ T_global_rc cdbm_check_namespace(const char* name_space);
 T_global_rc cdbm_start_read_config(T_cdbm_trans_id trans_id);
 
 
+
+/* memory related */
+void*cdbm_malloc(uint32 size);
+void cdbm_free(void *pbuffer);
 
 
 /* some common libs privided */

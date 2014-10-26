@@ -39,4 +39,7 @@ Oooooooooooooooops
 #define NULL   ((void *) 0)
 #endif
 
+#define MemAlloc(size,type,callerID,qos,bufpp)  malloc(size)
+
+
 #endif /* AAT_INCL_H */

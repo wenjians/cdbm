@@ -43,6 +43,9 @@ VTestCase cdbm_test_cases[] = {
     DEF_TEST_CASE(cdbm_test_ipaddress),
 
 
+    DEF_TEST_CASE(cdbm_test_transaction_manage),
+    DEF_TEST_CASE(cdbm_test_transaction_local),
+
 
     /*
     DEF_TEST_CASE(cdbm_test_misc_lib),

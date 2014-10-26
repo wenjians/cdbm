@@ -416,6 +416,39 @@ uint32 gfi_print_buf_it_read_line(T_gfi_print_buffer_iterator* node_it,
 
 
 
+int gfi_print_buf_output(T_gfi_print_buffer_id print_buffer, char* outbuffer, uint32 max_len)
+{
+    uint32   line_len=0, total_write_len=0;
+    char     *ptemp_str;
+    T_gfi_print_buffer_iterator buf_it;
+
+    AAT_STD_ASSERT(print_buffer!=NULL);
+
+    ptemp_str = gfi_print_buf_node_alloc();
+    if (ptemp_str == NULL)
+        return 0;
+
+    gfi_print_buf_it_init(print_buffer, &buf_it);
+    for (total_write_len=0; total_write_len<max_len-1; total_write_len += line_len)
+    {
+        line_len = gfi_print_buf_it_read_line(&buf_it, ptemp_str, GFI_PRINT_BUF_NODE_SIZE);
+        if (line_len == 0)
+            break;
+
+        if (total_write_len + line_len >= max_len-1)
+            break;
+
+        memcpy(outbuffer, ptemp_str, line_len);
+        outbuffer += line_len;
+
+    }
+
+    *ptemp_str = '\0';
+    gfi_print_buf_node_free(ptemp_str);
+
+    return total_write_len;
+}
+
 
 
 /*******************************************************************************

@@ -3,6 +3,7 @@
 
 #include <arpa/inet.h>
 
+#include "cdbm-lib.h"
 #include "cdbm-types.h"
 #include "cdbm-event.h"
 
@@ -55,8 +56,61 @@ T_cdbm_val_opt g_cdbm_val_ops[CDBM_TYPE_MAX] = {
     {CDBM_TYPE_STR_WORD,   NULL, NULL,               NULL,               NULL},
     {CDBM_TYPE_BOOL,   NULL,     NULL,               NULL,               NULL  },
     {CDBM_TYPE_ENUM_HASH,   NULL, NULL,               NULL,               NULL },
-    {CDBM_TYPE_BUF,   NULL,      NULL,               NULL,               NULL  }
+    {CDBM_TYPE_BUF,   NULL,      NULL,               NULL,               NULL  },
+    {CDBM_TYPE_KEYPATH, cdbm_keypath_val_eq,cdbm_keypath_to_str,cdbm_str_to_keypath,cdbm_keypath_validate},
 };
+
+
+//T_gfi_slab_pool* cdbm_val_pool = NULL;
+
+T_cdbm_value* cdbm_val_alloc()
+{
+    return (T_cdbm_value*)malloc(sizeof(T_cdbm_value));
+#if 0
+    uint32 ret_addr = gfi_return_address();
+    T_cdbm_value *p_val;
+
+    p_val = gfi_slab_pool_alloc_with_ra(cdbm_val_pool, ret_addr);
+    if (p_val != NULL) {
+        p_val->type = CDBM_TYPE_EMPTY;
+    }
+
+    return p_val;
+#endif
+}
+
+void cdbm_val_free(T_cdbm_value *p_val)
+{
+    uint32 ret_addr = gfi_return_address();
+
+    switch (p_val->type) {
+    case CDBM_TYPE_STRING:
+    case CDBM_TYPE_STR_WORD:
+    case CDBM_TYPE_KEYPATH:
+        cdbm_free(p_val->val.str);
+        break;
+
+    case CDBM_TYPE_ENUM_HASH:
+        cdbm_free(p_val->val.enum_val.str_val);
+        break;
+    case CDBM_TYPE_BUF:
+        cdbm_free(p_val->val.buf.ptr);
+        break;
+    default:
+        CDBM_LOG(CDBM_EVT_ERROR, "Error: cdbm_val_free unsupported type (%u), caller (0x%x)",
+                p_val->type, ret_addr);
+        break;
+    }
+
+
+    free(p_val);
+#if 0
+
+
+    gfi_slab_pool_free_with_ra(cdbm_val_pool, p_val, ret_addr);
+#endif
+}
+
 
 /******************************************************************************
  *  the following is types for "uint32"
@@ -322,6 +376,73 @@ T_global_rc cdbm_ipng_validate(const T_cdbm_dm_type *type, const T_cdbm_value *v
     return RC_OK;
 }
 
+
+
+/******************************************************************************
+ *  the following is types for "key path"
+ *****************************************************************************/
+
+bool cdbm_keypath_val_eq(const T_cdbm_value *v1, const T_cdbm_value *v2)
+{
+    if ((v1->type != CDBM_TYPE_KEYPATH) || (v2->type != CDBM_TYPE_KEYPATH))
+        return false;
+
+    return (strcmp(v1->val.str, v2->val.str)==0);
+}
+
+T_global_rc cdbm_str_to_keypath(const T_cdbm_dm_type *type, const char *str, T_cdbm_value *val)
+{
+    uint32 keypath_len;
+    T_global_rc ret_code;
+    char* temp_addr=NULL;
+
+    keypath_len = strlen(str);
+    temp_addr = MemAlloc(keypath_len+1, MEM_LONGTERM, AAT_MOD_CDBM, 0, NULL);
+    if (temp_addr == NULL)
+        return RC_CDBM_NO_MORE_MEMORY;
+
+    memcpy(temp_addr, str, keypath_len+1);  // it will copy both string and terminal '\0'
+
+    val->type = CDBM_TYPE_KEYPATH;
+    val->val.str = temp_addr;
+
+    ret_code = cdbm_keypath_validate(type, val);
+    CDBM_RET_IF_FAIL(ret_code);
+
+    /* NOTE: KEYPATH don't need further validation */
+
+    return RC_OK;
+}
+
+T_global_rc cdbm_keypath_to_str(const T_cdbm_value *val, char *str, uint32 len)
+{
+    uint32 copy_len;
+    if (len <= 1) {
+        return RC_CDBM_STR_NO_SPACE;
+    }
+
+    if (val->type != CDBM_TYPE_KEYPATH)
+        return RC_CDBM_INVALID_VTYPE;
+
+    copy_len = MIN(len-1, strlen(val->val.str));
+    memcpy(str, val->val.str, copy_len);
+    str[copy_len] = '\0';
+
+    return RC_OK;
+}
+
+
+T_global_rc cdbm_keypath_validate(const T_cdbm_dm_type *type, const T_cdbm_value *val)
+{
+    /* for IP address, no range check is need */
+    if (val->type != CDBM_TYPE_IPADDR)
+        return RC_CDBM_INVALID_TYPE;
+
+    if (strlen(val->val.str) >= CDBM_MAX_KEYPATH_LEN)
+        return RC_CDBM_KEYPATH_TOO_LONG;
+
+    return RC_OK;
+}
 
 /******************************************************************************
  *  the following is types for "MAC address"

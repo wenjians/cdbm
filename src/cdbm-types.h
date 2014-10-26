@@ -8,6 +8,12 @@
 
 
 
+/* maximum key path for each node, which include all the parents
+ *   e.g. /syslog/speed
+ */
+#define CDBM_MAX_KEYPATH_LEN    256
+#define CDBM_MAX_NONSTR_LEN      64
+
 
 typedef struct T_cdbm_buf {
     uint32  len;    /* does not include the len of terminal '\0' */
@@ -36,6 +42,8 @@ typedef struct T_cdbm_value {
 } T_cdbm_value;
 
 
+T_cdbm_value* cdbm_val_alloc();
+void cdbm_val_free(T_cdbm_value *p_val);
 
 bool cdbm_val_uint32_in_range(uint32 val, const char* range_string);
 bool cdbm_val_int32_in_range(int32 val, const char* range_string);
@@ -72,6 +80,10 @@ T_global_rc cdbm_ipng_validate(const T_cdbm_dm_type *type, const T_cdbm_value *v
 
 
 
+bool cdbm_keypath_val_eq(const T_cdbm_value *v1, const T_cdbm_value *v2);
+T_global_rc cdbm_str_to_keypath(const T_cdbm_dm_type *type, const char *str, T_cdbm_value *val);
+T_global_rc cdbm_keypath_to_str(const T_cdbm_value *val, char *str, uint32 len);
+T_global_rc cdbm_keypath_validate(const T_cdbm_dm_type *type, const T_cdbm_value *val);
 
 typedef bool (*T_cmdb_val_eq)(const T_cdbm_value* v1, const T_cdbm_value* v2);
 typedef T_global_rc (*T_cdbm_val_to_str)(const T_cdbm_value *val, char *buf, uint32 len);

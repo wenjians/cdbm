@@ -25,11 +25,11 @@ void cdbm_trans_init()
 }
 
 
-T_cdbm_trans_id cdbm_create_transaction(char* trans_name)
+T_cdbm_trans_id cdbm_trans_create(char* trans_name)
 {
     T_cdbm_trans_id cdbm_trans_id = NULL;
 
-    cdbm_trans_id = malloc(CDBM_TRANSACTION_SIZE);
+    cdbm_trans_id = cdbm_malloc(CDBM_TRANSACTION_SIZE);
     AAT_STD_ASSERT(cdbm_trans_id != NULL) ;
 
     memset(cdbm_trans_id, 0, CDBM_TRANSACTION_SIZE);
@@ -53,12 +53,18 @@ T_cdbm_trans_id cdbm_create_transaction(char* trans_name)
     return cdbm_trans_id;
 }
 
-T_global_rc cdbm_close_transaction(T_cdbm_trans_id cdbm_trans_id)
+T_global_rc cdbm_trans_delete(T_cdbm_trans_id cdbm_trans_id)
 {
     uint32 ret_addr = gfi_return_address();
+
+    if (cdbm_trans_id == NULL) {
+        CDBM_LOG(CDBM_EVT_ERROR, "ERROR: CDBM delete a NULL transaction, caller (0x%x)", ret_addr);
+        return RC_CDBM_TRANS_IS_NULL;
+    }
     if (!gfi_list_is_entry_in_list(g_cdbm_data.trans_list, &cdbm_trans_id->list_node))
     {
-        CDBM_LOG(CDBM_EVT_ERROR, "cdbm close transaction which is not exist, caller (0x%x)", ret_addr);
+        CDBM_LOG(CDBM_EVT_ERROR, "ERROR: CDBM close transaction(0x%p) which is not exist, "
+                "caller (0x%x)", cdbm_trans_id, ret_addr);
         return RC_CDBM_TRANS_NOT_IN_LIST;
     }
 
@@ -70,7 +76,7 @@ T_global_rc cdbm_close_transaction(T_cdbm_trans_id cdbm_trans_id)
     gfi_list_remove(g_cdbm_data.trans_list, &cdbm_trans_id->list_node);
     gfi_unlock(&g_cdbm_data.trans_list_lock);
 
-    free (cdbm_trans_id);
+    cdbm_free (cdbm_trans_id);
 
     return RC_OK;
 }

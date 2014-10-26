@@ -411,5 +411,6 @@ uint32 gfi_print_buf_it_read_line(T_gfi_print_buffer_iterator* node_it,
                                   char* buffer, uint32 max_buf_size);
 
 
+int gfi_print_buf_output(T_gfi_print_buffer_id print_buffer, char* outbuffer, uint32 max_len);
 #endif /* GFI_PRINT_BUFFER_H */
 

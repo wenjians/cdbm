@@ -25,6 +25,7 @@ typedef enum T_cdbm_vtype {
     CDBM_TYPE_BOOL          = 10,
     CDBM_TYPE_ENUM_HASH     = 11,
     CDBM_TYPE_BUF           = 12,
+    CDBM_TYPE_KEYPATH       = 13,
     CDBM_TYPE_MAX,                  /* MAX type value definition */
 } T_cdbm_vtype;
 

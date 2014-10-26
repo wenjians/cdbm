@@ -22,3 +22,16 @@ do {                            \
     if (ret_cod != RC_OK)       \
         return ret_cod;         \
 } while (0)
+
+
+#ifdef MIN
+#undef MIN
+#endif
+
+#define MIN(x, y) ((x) > (y) ? (y) : (x))            /* get minimum value */
+
+#ifdef MAX
+#undef MAX
+#endif
+
+#define MAX(x, y) ((x) > (y) ? (x) : (y))            /* get maximum value */

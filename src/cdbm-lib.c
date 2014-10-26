@@ -34,6 +34,16 @@ void cdbm_lib_init(int phase)
     }
 }
 
+
+void *cdbm_malloc(uint32 size)
+{
+    return malloc(size);
+}
+void cdbm_free(void *pbuffer)
+{
+    free(pbuffer);
+}
+
 /* get one token from buffer,
  * one token means next keyword which is terminated with space ()
  *

@@ -4,6 +4,7 @@
 #include "cdbm-lib.h"
 #include "cdbm-test-client.h"
 
+#if 0
 
 #define CDBM_TEST_NAME_SPACE   "http://www.cdbm-test.com/test-data"
 
@@ -75,4 +76,4 @@ T_global_rc test_read_config_group(const T_cdbm_trans_id trans_id)
     return RC_OK;
 }
 
-
+#endif

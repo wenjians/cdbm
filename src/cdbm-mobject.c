@@ -10,6 +10,7 @@
 
 #include "cdbm-lib.h"
 
+#if 0
 
 T_global_rc cdbm_subscribe(const char* name_space, const char *fmt, ...)
 {
@@ -180,7 +181,7 @@ T_global_rc cdbm_get_string(T_cdbm_trans_id trans_id, char*buffer, uint32 max_le
     
     conf_line = gfi_print_buf_node_alloc();
     read_len = gfi_print_buf_it_read_line(&trans_id->conf_read_it,
-                                          conf_line, GFI_PRINT_BUFF_MAX_SIZE);
+                                          conf_line, GFI_PRINT_BUF_NODE_SIZE);
     if (read_len == 0) {
         return RC_CDBM_READ_EMPTY;
     }
@@ -214,3 +215,4 @@ T_global_rc cdbm_get_string(T_cdbm_trans_id trans_id, char*buffer, uint32 max_le
     return (RC_OK);
 }
 
+#endif
