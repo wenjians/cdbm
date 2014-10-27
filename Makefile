@@ -16,7 +16,8 @@ OBJS = 	${OBJ_DIR}/linux_gfi-print-buffer.o	\
 		${OBJ_DIR}/test_cdbm-test-transaction.o \
 		${OBJ_DIR}/src_cdbm-types.o \
 		${OBJ_DIR}/src_cdbm-db-node.o \
-		${OBJ_DIR}/src_cdbm-data-model.o \
+		${OBJ_DIR}/src_cdbm-database.o \
+		${OBJ_DIR}/src_cdbm-datamodel.o \
 		${OBJ_DIR}/src_cdbm-lib.o \
 		${OBJ_DIR}/src_cdbm-mobject.o \
 		${OBJ_DIR}/src_cdbm-transaction.o

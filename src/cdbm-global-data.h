@@ -8,7 +8,7 @@
 
 #include "gfi-list.h"
 #include "gfi-lock.h"
-#include "cdbm-data-model.h"
+#include "cdbm-datamodel.h"
 
 /* it is the global data definition for CDBM module */
 typedef struct T_cdbm_global_data
@@ -19,7 +19,9 @@ typedef struct T_cdbm_global_data
 
 
     /* the following is global data for data model */
+    uint32 dm_type_cnt;
     T_cdbm_dm_typedef *dm_typedef;
+    uint32 dm_node_cnt;
     T_cdbm_dm_node *dm_node;
     T_cdbm_dm_node *dm_node_hash;
 } T_cdbm_global_data;

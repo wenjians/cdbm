@@ -10,7 +10,7 @@
 
 #include "cdbm-lib.h"
 #include "cdbm-types.h"
-#include "cdbm-data-model.h"
+#include "cdbm-datamodel.h"
 #include "cdbm-global-data.h"
 
 
@@ -23,7 +23,7 @@
 int main();
 
 extern T_cdbm_dm_typedef cdbm_test_cm_typedef[];
-extern T_cdbm_dm_node cdbm_test_cm_node[] ;
+extern T_cdbm_dm_node cdbm_test_dm_node[] ;
 
 #if 0
 static int cdbm_test_misc_lib();
@@ -32,19 +32,22 @@ static int cdbm_test_set_value() ;
 static int cdbm_test_mo_leaf();
 static int cdbm_test_mo_group();
 static int cdbm_test_cm_hash_search();
-T_global_rc cdbm_cm_test_printall();
 #endif
+
+
+
 
 VTestCase cdbm_test_cases[] = {    
 
+    // the following is about the different value types
     DEF_TEST_CASE(cdbm_test_range),
     DEF_TEST_CASE(cdbm_test_uint32),
     DEF_TEST_CASE(cdbm_test_int32),
     DEF_TEST_CASE(cdbm_test_ipaddress),
 
-
+    // the following is about the transaction management
     DEF_TEST_CASE(cdbm_test_transaction_manage),
-    DEF_TEST_CASE(cdbm_test_transaction_local),
+    DEF_TEST_CASE(cdbm_test_transaction_leaf),
 
 
     /*
@@ -64,6 +67,8 @@ VTestCase cdbm_test_cases[] = {
 
 int main()
 {
+    T_global_rc ret_cod;
+
     /* init phase 1 */
     gfi_list_mgr_init(1);
     cdbm_lib_init(1);
@@ -72,12 +77,16 @@ int main()
     gfi_list_mgr_init(2);
     cdbm_lib_init(2);
     
-    cdbm_cm_attach_data(cdbm_test_cm_node, cdbm_test_cm_typedef);
-    cdbm_dm_init();
+    cdbm_dm_attach_data(cdbm_test_dm_node,    cdbm_test_get_dm_node_items(),
+                        cdbm_test_cm_typedef, cdbm_test_get_typedef_items());
 
-    cdbm_test_print_size();
+    //cdbm_test_print_size();
 
-    //cdbm_cm_test_printall();
+    ret_cod = cdbm_dm_init();
+    AAT_STD_ASSERT(ret_cod == RC_OK);
+
+
+    //cdbm_dm_node_printall();
     runAll();
 
     return 0;
@@ -86,56 +95,8 @@ int main()
 /***************************************************************************
  * test case definitions
  **************************************************************************/
-uint32 prefix_space_cnt=0;
-T_global_rc cdbm_test_print_node(T_cdbm_dm_node* cm_node)
-{
-    int space;
-    char fmt[80];
-
-    for (space=0; space<prefix_space_cnt; space++) {
-        printf(" ");
-    }
-
-    snprintf(fmt, 80, "%%%d      %%s", 40-prefix_space_cnt);
-
-    printf(fmt, cm_node->key_name, cm_node->key_path);
-    return RC_OK;
-}
-
-T_global_rc cdbm_test_print_enter_container(T_cdbm_dm_node* cur_node)
-{
-    prefix_space_cnt+=4;
-    cdbm_test_print_node(cur_node);
-
-    return RC_OK;
-}
-
-T_global_rc cdbm_test_print_exit_container(T_cdbm_dm_node* cm_node)
-{
-    prefix_space_cnt -= 4;
-
-    return RC_OK;
-}
 
 #if 0
-T_global_rc cdbm_cm_test_printall()
-{
-    T_cdbm_dm_node_ops node_ops = {
-        cdbm_test_print_enter_container,
-        cdbm_test_print_exit_container,
-        cdbm_test_print_enter_container,
-        cdbm_test_print_exit_container,
-        cdbm_test_print_node,
-        NULL,
-        cdbm_test_print_node,
-        NULL
-    };
-
-    cdbm_dm_node_walk(&node_ops);
-
-    return RC_OK;
-}
-
 static int cdbm_test_misc_lib()
 {
 #define CDBM_TEST_TOKEN_LEN 64
@@ -185,126 +146,8 @@ static int cdbm_test_misc_lib()
 
     return 0;
 }
-static int cdbm_test_transaction() 
-{
-    T_cdbm_trans_id trans_id_1, trans_id_2;
-    T_global_rc ret_cod;
-
-    // a typical unit test include 4 steps.
-    // 1. Setup
-    VASSERT_TRUE(gfi_list_is_empty(g_cdbm_db.trans_list));
-    
-    // 2. Execute
-    trans_id_1 = cdbm_create_transaction("test_trans_test1");
-    VASSERT_TRUE(trans_id_1!=NULL);
-    VASSERT_EQ(1, gfi_list_size(g_cdbm_db.trans_list));
-
-    trans_id_2 = cdbm_create_transaction("test_trans_test2");
-    VASSERT_TRUE(trans_id_2!=NULL);
-    VASSERT_EQ(2, gfi_list_size(g_cdbm_db.trans_list));
-
-    ret_cod = cdbm_close_transaction(trans_id_1);
-    VASSERT_EQ(RC_OK, ret_cod);
-    VASSERT_EQ(1, gfi_list_size(g_cdbm_db.trans_list));
-
-    ret_cod = cdbm_close_transaction(trans_id_1);
-    VASSERT_EQ(RC_CDBM_TRANS_NOT_IN_LIST, ret_cod);
-    VASSERT_EQ(1, gfi_list_size(g_cdbm_db.trans_list));
-
-    ret_cod = cdbm_close_transaction(trans_id_2);
-    VASSERT_EQ(RC_OK, ret_cod);
-    VASSERT_TRUE(gfi_list_is_empty(g_cdbm_db.trans_list));
-
-    // 3. Verify
-
-    // 4. Teardown
-
-    return 0;
-}
 
 
-
-static int cdbm_test_set_value() 
-{
-    char *expect;
-    T_cdbm_trans_id trans_id;
-    T_global_rc ret_cod;
-    T_global_IP_ADDR ipv4_addr;
-    T_global_IP6_ADDR ipv6_addr;
-    T_global_IPNG_ADDR ipng_addr;
-
-    // a typical unit test include 4 steps.
-
-    // 1. Setup
-    trans_id = cdbm_create_transaction("test_trans");
-    VASSERT_TRUE(trans_id!=NULL);
-
-    // ================================
-    // 2. Execute
-
-    ret_cod = cdbm_set_string(trans_id, "local", "/syslog/save-mode");
-    VASSERT_EQ(RC_OK, ret_cod);
-
-    ret_cod = cdbm_set_uint32(trans_id, 10, "/syslog/speed-uint");
-    VASSERT_EQ(RC_OK, ret_cod);
-
-    ret_cod = cdbm_set_int32(trans_id, -10, "/syslog/speed-int");
-    VASSERT_EQ(RC_OK, ret_cod);
-
-    ipv4_addr.S_ip_b.s_b1 = 10;
-    ipv4_addr.S_ip_b.s_b2 = 10;
-    ipv4_addr.S_ip_b.s_b3 = 0;
-    ipv4_addr.S_ip_b.s_b4 = 4;
-    ret_cod = cdbm_set_ipv4(trans_id, ipv4_addr, "/syslog/%s", "primary-ip");
-    VASSERT_EQ(RC_OK, ret_cod);
-
-    memset(&ipv6_addr, 0, sizeof(ipv6_addr));
-    ipv6_addr.in6.addr8[0] = 0xff;
-    ipv6_addr.in6.addr8[1] = 0x02;
-    ipv6_addr.in6.addr8[15] = 0x1;
-    ret_cod = cdbm_set_ipv6(trans_id, ipv6_addr, "/syslog/secondary-ip");
-    VASSERT_EQ(RC_OK, ret_cod);
-
-    ipng_addr.ipVer = IP_VERSION_4;
-    ipng_addr.ipng_ip4.S_ip_b.s_b1 = 10;
-    ipng_addr.ipng_ip4.S_ip_b.s_b2 = 10;
-    ipng_addr.ipng_ip4.S_ip_b.s_b3 = 0;
-    ipng_addr.ipng_ip4.S_ip_b.s_b4 = 6;
-    ret_cod = cdbm_set_ipng(trans_id, ipng_addr, "/%s/ipng-v%d", "syslog", 4);
-    VASSERT_EQ(RC_OK, ret_cod);
-
-    memset(&ipng_addr, 0, sizeof(ipng_addr));
-    ipng_addr.ipVer = IP_VERSION_6;
-    ipng_addr.ipng_ip6.in6.addr8[0] = 0xff;
-    ipng_addr.ipng_ip6.in6.addr8[1] = 0x02;
-    ipng_addr.ipng_ip6.in6.addr8[15] = 0x6;
-    ret_cod = cdbm_set_ipng(trans_id, ipng_addr, "/%s/ipng-v%d", "syslog", 6);
-    VASSERT_EQ(RC_OK, ret_cod);
-    
-
-    ret_cod = cdbm_set_string(trans_id, "aa:bb:cc:dd:ee:ff", "/syslog/local-mac");
-    VASSERT_EQ(RC_OK, ret_cod);
-
-        
-    // 3. Verify
-    expect = 
-        "/syslog/save-mode local\n"
-        "/syslog/speed-uint 10\n"
-        "/syslog/speed-int -10\n"
-        "/syslog/primary-ip 10.10.0.4\n"
-        "/syslog/secondary-ip ff02::1\n"
-        "/syslog/ipng-v4 10.10.0.6\n"
-        "/syslog/ipng-v6 ff02::6\n"
-        "/syslog/local-mac aa:bb:cc:dd:ee:ff\n" ;
-        
-    VASSERT_EQ_STR(expect, trans_id->plain_config->buffer);
-    
-    // 4. Teardown
-    ret_cod = cdbm_close_transaction(trans_id);
-    VASSERT_EQ(RC_OK, ret_cod);
-    
-    return 0;
-}
 
 
 static int cdbm_test_mo_leaf()

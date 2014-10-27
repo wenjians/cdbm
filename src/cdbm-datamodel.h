@@ -173,15 +173,18 @@ typedef struct T_cdbm_dm_node_ops {
 } T_cdbm_dm_node_ops;
 
 
-void cdbm_cm_attach_data(T_cdbm_dm_node *_node, T_cdbm_dm_typedef *_typedef);
-T_global_rc cdbm_dm_node_walk(T_cdbm_dm_node_ops *node_ops);
+void cdbm_dm_attach_data(T_cdbm_dm_node *_node,       uint32 node_cnt,
+                         T_cdbm_dm_typedef *_typedef, uint32 typedef_cnt);
+//T_global_rc cdbm_dm_node_walk(T_cdbm_dm_node_ops *node_ops);
+T_global_rc cdbm_dm_node_walk_one_node(T_cdbm_dm_node *cur_node, T_cdbm_dm_node_ops *node_ops);
 T_global_rc cdbm_dm_init();
+T_global_rc cdbm_dm_node_printall();
 
 T_cdbm_dm_node* cdbm_dm_get_node_from_keypath(const char* key_path);
-bool cdbm_dm_is_root(T_cdbm_dm_node *cm_node) ;
-bool cmbm_dm_is_container(T_cdbm_dm_node *cm_node);
-bool cmbm_dm_is_list(T_cdbm_dm_node *cm_node);
-bool cmbm_dm_is_leaf(T_cdbm_dm_node *cm_node);
-bool cmbm_dm_is_leaf_list(T_cdbm_dm_node *cm_node);
+bool cdbm_dm_node_is_root(T_cdbm_dm_node *cm_node) ;
+bool cmbm_dm_node_is_container(T_cdbm_dm_node *cm_node);
+bool cmbm_dm_node_is_list(T_cdbm_dm_node *cm_node);
+bool cmbm_dm_node_is_leaf(T_cdbm_dm_node *cm_node);
+bool cmbm_dm_node_is_leaf_list(T_cdbm_dm_node *cm_node);
 
 #endif /* CDBM_CONFIG_DATA_MODEL_H */

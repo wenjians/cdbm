@@ -4,7 +4,7 @@
 
 #include "aat-types.h"
 
-#include "cdbm-data-model.h"
+#include "cdbm-datamodel.h"
 
 
 

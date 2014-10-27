@@ -3,7 +3,7 @@
 #include "vunit.h"
 
 #include "cdbm-types.h"
-#include "cdbm-data-model.h"
+#include "cdbm-datamodel.h"
 #include "cdbm-test.h"
 
 

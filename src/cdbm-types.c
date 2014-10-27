@@ -84,6 +84,9 @@ void cdbm_val_free(T_cdbm_value *p_val)
     uint32 ret_addr = gfi_return_address();
 
     switch (p_val->type) {
+    case CDBM_TYPE_EMPTY:   /* empty value, no inside memory to be free */
+        break;
+
     case CDBM_TYPE_STRING:
     case CDBM_TYPE_STR_WORD:
     case CDBM_TYPE_KEYPATH:
@@ -435,7 +438,7 @@ T_global_rc cdbm_keypath_to_str(const T_cdbm_value *val, char *str, uint32 len)
 T_global_rc cdbm_keypath_validate(const T_cdbm_dm_type *type, const T_cdbm_value *val)
 {
     /* for IP address, no range check is need */
-    if (val->type != CDBM_TYPE_IPADDR)
+    if (val->type != CDBM_TYPE_KEYPATH)
         return RC_CDBM_INVALID_TYPE;
 
     if (strlen(val->val.str) >= CDBM_MAX_KEYPATH_LEN)

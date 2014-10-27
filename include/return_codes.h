@@ -15,6 +15,10 @@ typedef enum T_global_rc {
     RC_CDBM_TRANS_IS_NULL      = -10000,
     RC_CDBM_TRANS_NOT_IN_LIST  = -10001,
 
+    /* data model related */
+    RC_CDBM_DM_KEYPATH_EXIST   = -20000,
+    RC_CDBM_DM_ADD_KEYPATH_FAIL= -20001,
+
     RC_CDBM_NAME_SPACE_INVALID = -11001,
     RC_CDBM_INVALID_IPV4_ADDR  = -11002,
     RC_CDBM_INVALID_IPV6_ADDR  = -11003,

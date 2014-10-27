@@ -7,21 +7,39 @@
 #include "gfi-list.h"
 
 
+typedef enum T_cdbm_operation {
+    CDBM_OP_REPLACE = 1,
+    CDBM_OP_MERGE   = 2,
+    CDBM_OP_CREATE  = 3,
+    CDBM_OP_DELETE  = 4
+} T_cdbm_operation;
+
 typedef struct T_cdbm_trans {
     T_gfi_list   list_node;   // all the transaction items will be in one list
 
+    /* the follwoing is the source of configuration data */
+    T_cdbm_operation config_op;
+    T_gfi_print_buffer_id config_xml;
+    T_gfi_print_buffer_id config_txt;
 
-    T_gfi_print_buffer_id xml_config;
-    T_gfi_print_buffer_id plain_config;
+    /* the following is the meta-data (internal data) of the session */
+    T_gfi_list_head config_node_list;
+
+    /* the following is the the result of the configuration transaction */
+    T_global_rc config_result;
+    T_gfi_print_buffer_id err_msg;
+
+
 
     /* managed object read configuration */
     T_gfi_print_buffer_iterator conf_read_it;
-
-
 }T_cdbm_trans;
+
+
 
 typedef struct T_cdbm_trans* T_cdbm_trans_id;
 #define CDBM_TRANSACTION_SIZE sizeof(T_cdbm_trans)
+
 
 
 
@@ -47,6 +65,9 @@ T_global_rc cdbm_get_string(T_cdbm_trans_id trans_id, char*buffer, uint32 max_le
 void cdbm_trans_init();
 T_cdbm_trans_id cdbm_trans_create(char* trans_name);
 T_global_rc cdbm_trans_delete(T_cdbm_trans_id cdbm_trans);
+
+T_global_rc cdbm_trans_commit(T_cdbm_trans_id trans_id);
+T_global_rc cdbm_trans_get_result(T_cdbm_trans_id trans_id);
 
 T_global_rc cdbm_subscribe(const char* name_space, const char *fmt, ...);
 T_global_rc cdbm_unsubscribe(const char* name_space, const char *fmt, ...);

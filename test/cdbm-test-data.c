@@ -11,8 +11,7 @@
 
 #include "cdbm-lib.h"
 #include "cdbm-types.h"
-#include "cdbm-data-model.h"
-//#include "cdbm-config-model.h"
+#include "cdbm-datamodel.h"
 
 #include "cdbm-test.h"
 
@@ -66,6 +65,11 @@ uint32 cdbm_test_get_sizeof_typedef()
     return sizeof(cdbm_test_cm_typedef);
 }
 
+uint32 cdbm_test_get_typedef_items()
+{
+    return sizeof(cdbm_test_cm_typedef)/sizeof(T_cdbm_dm_typedef);
+}
+
 /**************************************************************************************************
  ******            the following is type declaration which is used for leaf/leaf_list     *********
  *************************************************************************************************/
@@ -109,42 +113,35 @@ T_cdbm_dm_type test_cm_type_35 = { 0, CDBM_TYPE_UINT32,      .type.t_int  = {"0.
  ******               the following is CDBM configuration parameter model                    ******
  *************************************************************************************************/
 
-T_cdbm_dm_node cdbm_test_cm_node[] = {
+T_cdbm_dm_node cdbm_test_dm_node[] = {
     /* node type                config, name,           parent  child,  sibling must,       xpath */
     /*  leaf:   default, mandatory, type    */
     {CDBM_NODE_TYPE_CONTAINER,  false,  NULL,           -1,     1,      -1,     NULL,       "/",
-        .node.container = {0} /*,
-        .hh = {NULL}*/
+        .node.container = {0}
     }, /* 0 : reserved for root */
     
     {CDBM_NODE_TYPE_CONTAINER,  true,   "test-types",   0,      2,      13,     NULL,       "/test-types",
-        .node.container = {0} /*,
-        .hh = {NULL} */
+        .node.container = {0}
     }, /* 1 */
 
     {CDBM_NODE_TYPE_LEAF,       true,   "save-mode",    1,      -1,     3,      NULL,       "/test-types/save-mode",
-        .node.leaf = {NULL,      false,     &test_cm_type_2} /*,
-        .hh = {NULL} */
+        .node.leaf = {NULL,      false,     &test_cm_type_2}
     }, /* 2 */
 
     {CDBM_NODE_TYPE_LEAF,       true,   "primary-ip",   1,      -1,     4,      NULL,       "/test-types/primary-ip",
-        .node.leaf = {"0.0.0.0", false,     &test_cm_type_ipv4} /*,
-        .hh = {NULL}*/
+        .node.leaf = {"0.0.0.0", false,     &test_cm_type_ipv4}
     }, /* 3 */
 
-    {CDBM_NODE_TYPE_LEAF,       true,   "second-ip",    1,      -1,     5,      "/test-types/primary-ip != 0.0.0.0",       "/test-types/second-ip",
-        .node.leaf = {"::",      false,     &test_cm_type_ipv6} /*,
-        .hh = {NULL} */
+    {CDBM_NODE_TYPE_LEAF,       true,   "secondary-ip",    1,      -1,     5,      "/test-types/primary-ip != 0.0.0.0",       "/test-types/secondary-ip",
+        .node.leaf = {"::",      false,     &test_cm_type_ipv6}
     }, /* 4 */
 
     {CDBM_NODE_TYPE_LEAF,       true,   "ipng-v4",      1,      -1,     6,      NULL,       "/test-types/ipng-v4",
-        .node.leaf = {NULL,      false,     &test_cm_type_ipaddr} /*,
-        .hh = {NULL} */
+        .node.leaf = {NULL,      false,     &test_cm_type_ipaddr}
     }, /* 5 */
 
     {CDBM_NODE_TYPE_LEAF,       true,   "ipng-v6",      1,      -1,     7,      NULL,       "/test-types/ipng-v6",
-        .node.leaf = {NULL,      false,     &test_cm_type_ipaddr} /*,
-        .hh = {NULL} */
+        .node.leaf = {NULL,      false,     &test_cm_type_ipaddr}
     }, /* 6 */
 
     {CDBM_NODE_TYPE_LEAF,       true,   "speed-uint",   1,      -1,     8,      NULL,       "/test-types/speed-uint",
@@ -233,7 +230,7 @@ T_cdbm_dm_node cdbm_test_cm_node[] = {
         .node.leaf_list = {0,      10,    0,        &test_cm_type_26}
     }, /* 26 */
     
-    {CDBM_NODE_TYPE_CONTAINER,  true,   "cp-monitoring",15,     28,     33,     NULL,       "/ip-realm/realm-table/cp-monitoring",
+    {CDBM_NODE_TYPE_CONTAINER,  true,   "cp-monitoring",15,     28,     -1,     NULL,       "/ip-realm/realm-table/cp-monitoring",
         .node.container = {0}
     }, /* 27 */
     
@@ -266,16 +263,20 @@ T_cdbm_dm_node cdbm_test_cm_node[] = {
     }, /* 34 */
     
     {CDBM_NODE_TYPE_LEAF,       true,   "cp-delay",     13,     -1,     -1,     NULL,       "/ip-realm/cp-delay",
-        .node.leaf = {"8000",           false,      &test_cm_type_34}
+        .node.leaf = {"8000",           false,      &test_cm_type_35}
     }, /* 35 */
-
 } ;
 
+
+uint32 cdbm_test_get_dm_node_items()
+{
+    return sizeof(cdbm_test_dm_node)/sizeof(T_cdbm_dm_node);
+}
 void cdbm_test_print_size()
 {
     printf("size of data model  : items(%3d), each item(%3d), total (%5d)\n",
-            sizeof(cdbm_test_cm_node)/sizeof(T_cdbm_dm_node),
-            sizeof(T_cdbm_dm_node), sizeof(cdbm_test_cm_node));
+            sizeof(cdbm_test_dm_node)/sizeof(T_cdbm_dm_node),
+            sizeof(T_cdbm_dm_node), sizeof(cdbm_test_dm_node));
     printf("size of data typedef: items(%3d), each item(%3d), total (%5d)\n",
             sizeof(cdbm_test_cm_typedef)/sizeof(T_cdbm_dm_typedef),
             sizeof(T_cdbm_dm_typedef), sizeof(cdbm_test_cm_typedef));
