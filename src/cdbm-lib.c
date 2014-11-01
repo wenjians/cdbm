@@ -5,10 +5,12 @@
  */
 
 #include "aat-incl.h"
-#include "cdbm-lib.h"
+
 
 #include "cdbm-types.h"
-#include "cdbm-datamodel.h"
+#include "cdbm-lib.h"
+
+//#include "cdbm-datamodel.h"
 #include "cdbm-global-data.h"
 
 
@@ -16,13 +18,11 @@ T_cdbm_global_data g_cdbm_data;
 
 void cdbm_lib_init(int phase)
 {
-    T_cdbm_vtype vtype;
     if (phase == 1)
     {
         cdbm_trans_init();
 
-        for (vtype=CDBM_TYPE_EMPTY; vtype<CDBM_TYPE_MAX; vtype++)
-            AAT_STD_ASSERT(g_cdbm_val_ops[vtype].val_type == vtype);
+        cdbm_val_lib_init();
     }
     else if (phase == 2)
     {

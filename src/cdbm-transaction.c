@@ -43,11 +43,14 @@ T_cdbm_trans_id cdbm_trans_create(char* trans_name)
             GFI_PRITN_BUF_FLAG_OVERSTOP | GFI_PRINT_BUF_FLAG_ALIGNED, CDBM_CONFIG_MAX_SIZE);
     AAT_STD_ASSERT(trans_id->config_txt != NULL);
 
-    trans_id->err_msg = gfi_print_buf_creat(trans_name, AAT_MOD_CDBM,
+    trans_id->rsp_msg = gfi_print_buf_creat(trans_name, AAT_MOD_CDBM,
             GFI_PRITN_BUF_FLAG_OVERSTOP | GFI_PRINT_BUF_FLAG_ALIGNED, CDBM_CONFIG_MAX_SIZE);
     AAT_STD_ASSERT(trans_id->config_txt != NULL);
 
-    gfi_list_create2(&trans_id->config_node_list, "cdbm_transaction");
+    gfi_list_create2(&trans_id->config_list_kv_pair, "cdbm_transaction");
+
+    trans_id->config_dbase = cdbm_db_create();
+    AAT_STD_ASSERT(trans_id->config_dbase != NULL);
 
     /*
     cdbm_trans_id->xml_config = gfi_print_buf_creat(trans_name, AAT_MOD_CDBM,
@@ -98,10 +101,21 @@ T_global_rc cdbm_trans_commit(T_cdbm_trans_id trans_id)
 {
     T_global_rc ret_cod;
 
-    ret_cod = cdbm_db_nlist_from_lined_text(&trans_id->config_node_list,
-            trans_id->config_txt, trans_id->err_msg);
+    ret_cod = cdbm_db_nlist_from_lined_text(&trans_id->config_list_kv_pair,
+            trans_id->config_txt, trans_id->rsp_msg);
     trans_id->config_result = ret_cod;
     CDBM_RET_IF_FAIL(ret_cod);
+
+    //printf("%s: kv_list_pair:\n", __FUNCTION__);
+    //cdbm_db_nlist_print(&trans_id->config_list_kv_pair);
+
+    ret_cod = cdbm_db_import_from_nlist(trans_id->config_dbase,
+            &(trans_id->config_list_kv_pair), trans_id->rsp_msg);
+    CDBM_RET_IF_FAIL(ret_cod);
+
+    //printf("%s: kv_list_pair:\n", __FUNCTION__);
+    //cdbm_db_print(trans_id->config_dbase);
+
 
     return RC_OK;
 }

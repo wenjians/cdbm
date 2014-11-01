@@ -262,9 +262,21 @@ T_cdbm_dm_node cdbm_test_dm_node[] = {
         .node.leaf = {"25",             false,      &test_cm_type_34}
     }, /* 34 */
     
-    {CDBM_NODE_TYPE_LEAF,       true,   "cp-delay",     13,     -1,     -1,     NULL,       "/ip-realm/cp-delay",
+    {CDBM_NODE_TYPE_LEAF,       true,   "cp-delay",     13,     -1,     36,     NULL,       "/ip-realm/cp-delay",
         .node.leaf = {"8000",           false,      &test_cm_type_35}
     }, /* 35 */
+
+    {CDBM_NODE_TYPE_CONTAINER,  true,   "test-node",    13,     37,     -1,     NULL,       "/ip-realm/test-node",
+        .node.container = {0}
+    }, /* 36 */
+
+    {CDBM_NODE_TYPE_CONTAINER,  true,   "leaf",         36,     38,     -1,     NULL,       "/ip-realm/test-node/leaf",
+        .node.container = {0}
+    }, /* 37 */
+
+    {CDBM_NODE_TYPE_LEAF,       true,   "leaf1",        37,     -1,     -1,     NULL,       "/ip-realm/test-node/leaf/leaf1",
+        .node.leaf = {"8000",           false,      &test_cm_type_35}
+    }, /* 38 */
 } ;
 
 

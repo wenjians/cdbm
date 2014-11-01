@@ -3,9 +3,72 @@
 
 #include <arpa/inet.h>
 
-#include "cdbm-lib.h"
+//#include "cdbm-lib.h"
 #include "cdbm-types.h"
 #include "cdbm-event.h"
+
+#include "cdbm-lib.h"
+
+
+
+bool cdbm_uint32_val_eq(const T_cdbm_value *v1, const T_cdbm_value *v2);
+T_global_rc cdbm_uint32_to_str(const T_cdbm_value *val, char *buf, uint32 len);
+T_global_rc cdbm_str_to_uint32(const T_cdbm_dm_type *type, const char *str, T_cdbm_value *val);
+T_global_rc cdbm_uint32_validate(const T_cdbm_dm_type *type, const T_cdbm_value *val);
+
+bool cdbm_int32_val_eq(const T_cdbm_value *v1, const T_cdbm_value *v2);
+T_global_rc cdbm_int32_to_str(const T_cdbm_value *val, char *buf, uint32 len);
+T_global_rc cdbm_str_to_int32(const T_cdbm_dm_type *type, const char *str, T_cdbm_value *val);
+T_global_rc cdbm_int32_validate(const T_cdbm_dm_type *type, const T_cdbm_value *val);
+
+
+
+bool cdbm_ipv4_val_eq(const T_cdbm_value *v1, const T_cdbm_value *v2);
+T_global_rc cdbm_str_to_ipv4(const T_cdbm_dm_type *type, const char *str, T_cdbm_value *val);
+T_global_rc cdbm_ipv4_to_str(const T_cdbm_value *val, char *str, uint32 len);
+T_global_rc cdbm_ipv4_validate(const T_cdbm_dm_type *type, const T_cdbm_value *val);
+
+
+
+bool cdbm_ipv6_val_eq(const T_cdbm_value *v1, const T_cdbm_value *v2);
+T_global_rc cdbm_str_to_ipv6(const T_cdbm_dm_type *type, const char *str, T_cdbm_value *val);
+T_global_rc cdbm_ipv6_to_str(const T_cdbm_value *val, char *str, uint32 len);
+T_global_rc cdbm_ipv6_validate(const T_cdbm_dm_type *type, const T_cdbm_value *val);
+
+
+bool cdbm_ipng_val_eq(const T_cdbm_value *v1, const T_cdbm_value *v2);
+T_global_rc cdbm_str_to_ipng(const T_cdbm_dm_type *type, const char *str, T_cdbm_value *val);
+T_global_rc cdbm_ipng_to_str(const T_cdbm_value *val, char *str, uint32 len);
+T_global_rc cdbm_ipng_validate(const T_cdbm_dm_type *type, const T_cdbm_value *val);
+
+
+static bool cdbm_str_val_eq(const T_cdbm_value *v1, const T_cdbm_value *v2);
+static T_global_rc cdbm_valstr_to_str(const T_cdbm_value *val, char *buf, uint32 len);
+static T_global_rc cdbm_str_to_valstr(const T_cdbm_dm_type *type, const char *str, T_cdbm_value *val);
+static T_global_rc cdbm_str_validate(const T_cdbm_dm_type *type, const T_cdbm_value *val);
+
+
+static bool cdbm_strword_val_eq(const T_cdbm_value *v1, const T_cdbm_value *v2);
+static T_global_rc cdbm_str_to_strword(const T_cdbm_dm_type *type, const char *str, T_cdbm_value *val);
+static T_global_rc cdbm_strword_validate(const T_cdbm_dm_type *type, const T_cdbm_value *val);
+
+typedef bool (*T_cmdb_val_eq)(const T_cdbm_value* v1, const T_cdbm_value* v2);
+typedef T_global_rc (*T_cdbm_val_to_str)(const T_cdbm_value *val, char *buf, uint32 len);
+typedef T_global_rc (*T_cdbm_str_to_val)(const T_cdbm_dm_type *type, const char *str, T_cdbm_value *val);
+typedef T_global_rc (*T_cdbm_val_valid)(const T_cdbm_dm_type *type, const T_cdbm_value *val);
+typedef T_cdbm_value* (*T_cdbm_val_dup)(const T_cdbm_value *val);
+
+typedef struct T_cdbm_val_opt {
+    T_cdbm_vtype  val_type;
+    T_cmdb_val_eq val_eq;
+    T_cdbm_val_to_str val_to_str;
+    T_cdbm_str_to_val str_to_val;
+    T_cdbm_val_valid  val_valid;
+//    T_cdbm_val_dup val_dup;
+
+} T_cdbm_val_opt;
+
+
 
 /* the following is operation for different types, for each type, the following
  * operation are mandatory:
@@ -52,8 +115,8 @@ T_cdbm_val_opt g_cdbm_val_ops[CDBM_TYPE_MAX] = {
     {CDBM_TYPE_IPADDR,  cdbm_ipng_val_eq,   cdbm_ipng_to_str,   cdbm_str_to_ipng,   cdbm_ipng_validate  },
     {CDBM_TYPE_MAC,   NULL,     NULL,               NULL,               NULL  },
     {CDBM_TYPE_HEX,     cdbm_uint32_val_eq, cdbm_uint32_to_str, cdbm_str_to_uint32, cdbm_uint32_validate},
-    {CDBM_TYPE_STRING,   NULL,  NULL,               NULL,               NULL   },
-    {CDBM_TYPE_STR_WORD,   NULL, NULL,               NULL,               NULL},
+    {CDBM_TYPE_STRING,  cdbm_str_val_eq,    cdbm_valstr_to_str, cdbm_str_to_valstr, cdbm_str_validate   },
+    {CDBM_TYPE_STR_WORD,cdbm_strword_val_eq,cdbm_valstr_to_str, cdbm_str_to_strword,cdbm_strword_validate},
     {CDBM_TYPE_BOOL,   NULL,     NULL,               NULL,               NULL  },
     {CDBM_TYPE_ENUM_HASH,   NULL, NULL,               NULL,               NULL },
     {CDBM_TYPE_BUF,   NULL,      NULL,               NULL,               NULL  },
@@ -61,11 +124,22 @@ T_cdbm_val_opt g_cdbm_val_ops[CDBM_TYPE_MAX] = {
 };
 
 
+
+void cdbm_val_lib_init() {
+    T_cdbm_vtype vtype;
+
+    for (vtype=CDBM_TYPE_EMPTY; vtype<CDBM_TYPE_MAX; vtype++)
+        AAT_STD_ASSERT(g_cdbm_val_ops[vtype].val_type == vtype);
+}
+
 //T_gfi_slab_pool* cdbm_val_pool = NULL;
 
-T_cdbm_value* cdbm_val_alloc()
+T_cdbm_value* cdbm_val_malloc()
 {
-    return (T_cdbm_value*)malloc(sizeof(T_cdbm_value));
+    T_cdbm_value* val = (T_cdbm_value*)cdbm_malloc(sizeof(T_cdbm_value));
+    memset(val, 0, sizeof(T_cdbm_value));
+    return val;
+
 #if 0
     uint32 ret_addr = gfi_return_address();
     T_cdbm_value *p_val;
@@ -87,6 +161,15 @@ void cdbm_val_free(T_cdbm_value *p_val)
     case CDBM_TYPE_EMPTY:   /* empty value, no inside memory to be free */
         break;
 
+
+    /* the following data is not dynamic allocated memory, no free need */
+    case CDBM_TYPE_UINT32:
+    case CDBM_TYPE_INT32:
+    case CDBM_TYPE_IPV4:
+    case CDBM_TYPE_IPV6:
+    case CDBM_TYPE_IPADDR:
+        break;
+
     case CDBM_TYPE_STRING:
     case CDBM_TYPE_STR_WORD:
     case CDBM_TYPE_KEYPATH:
@@ -105,14 +188,205 @@ void cdbm_val_free(T_cdbm_value *p_val)
         break;
     }
 
-
-    free(p_val);
+    cdbm_free(p_val);
 #if 0
 
 
     gfi_slab_pool_free_with_ra(cdbm_val_pool, p_val, ret_addr);
 #endif
 }
+
+
+
+/******************************************************************************
+ *  the following is common types operation, which will call different
+ *  various operation defined in g_cdbm_val_ops according to value type
+ *****************************************************************************/
+
+inline bool cdbm_val_is_valid_type(vtype) {
+    return (vtype > CDBM_TYPE_EMPTY && vtype < CDBM_TYPE_MAX);
+}
+
+T_cdbm_vtype cdbm_val_get_type(T_cdbm_value *val) {
+    return val->type;
+}
+
+T_global_rc cdbm_val_set_type(T_cdbm_value *v1, T_cdbm_vtype vtype) {
+    if (!cdbm_val_is_valid_type(vtype))
+        return RC_CDBM_VAL_INVALID_TYPE;
+
+    v1->type = vtype;
+
+    return RC_OK;
+}
+
+bool cdbm_val_eq(const T_cdbm_value *v1, const T_cdbm_value *v2)
+{
+    T_cdbm_val_opt *val_ops;
+
+    if (!cdbm_val_is_valid_type(v1->type))
+        return false;
+
+    if (v1->type != v2->type)
+        return false;
+
+    val_ops = &g_cdbm_val_ops[v1->type];
+
+    return val_ops->val_eq(v1, v2);
+}
+
+T_global_rc cdbm_val_to_str(const T_cdbm_value *val, char *buf, uint32 len)
+{
+    T_cdbm_val_opt *val_ops;
+
+    if (len == 0) {
+        return RC_CDBM_VAL_BUF_TOO_SHORT;
+    }
+    else if (len == 1) {
+        buf[0] = '\0';
+        return RC_OK;
+    }
+
+    if (val == NULL) {
+        strcpy(buf, "(NULL)");
+        return RC_OK;
+    }
+
+    if (!cdbm_val_is_valid_type(val->type))
+        return RC_CDBM_VAL_INVALID_TYPE;
+
+    val_ops = &g_cdbm_val_ops[val->type];
+
+    return val_ops->val_to_str(val, buf, len);
+}
+
+char* cdbm_val_ret_str(const T_cdbm_value *val, char *buf, uint32 len){
+
+    T_global_rc ret_cod;
+    ret_cod = cdbm_val_to_str(val, buf, len);
+    if (ret_cod == RC_OK)
+        return buf;
+
+    return "(NULL)";
+}
+
+T_global_rc cdbm_str_to_val(const T_cdbm_dm_type *type, const char *str, T_cdbm_value *val)
+{
+    T_cdbm_val_opt *val_ops;
+
+    if (!cdbm_val_is_valid_type(val->type)) {
+        //printf("cdbm_str_to_val: type (%d) error", val->type);
+        return RC_CDBM_VAL_INVALID_TYPE;
+    }
+
+    if (type != NULL) {
+        if (type->base_type != val->type) {
+            //printf("cdbm_str_to_val: type (%d:%d) not match\n", type->base_type, val->type);
+            return RC_CDBM_VAL_TYPE_NOT_MATCH ;
+        }
+    }
+
+    val_ops = &g_cdbm_val_ops[val->type];
+
+    return val_ops->str_to_val(type, str, val);
+}
+
+
+T_global_rc cdbm_val_validate(const T_cdbm_dm_type *type, const T_cdbm_value *val)
+{
+    T_cdbm_val_opt *val_ops;
+
+    if (!cdbm_val_is_valid_type(val->type))
+        return RC_CDBM_VAL_INVALID_TYPE;
+
+    if (type->base_type != val->type)
+        return RC_CDBM_VAL_INVALID_TYPE ;
+
+    val_ops = &g_cdbm_val_ops[val->type];
+
+    return val_ops->val_valid(type, val);
+
+}
+
+
+/*
+ * This function allocates memory and duplicates *val, i.e. a T_cdbm_value struct
+ * is always allocated, memory for the actual value is also allocated for the
+ * types that need it. Returns a pointer to the new T_cdbm_value, or NULL if
+ * allocation failed. The allocated memory can be freed with cdbm_free_dup_value().
+ */
+T_cdbm_value *cdbm_val_duplicate(const T_cdbm_value *val)
+{
+    uint32 len;
+    T_cdbm_value* value;
+
+    if (!cdbm_val_is_valid_type(val->type))
+        return NULL;
+
+    value = cdbm_val_malloc();
+    if (value==NULL)
+        return NULL;
+
+    value->type = val->type;
+    switch (val->type) {
+    case CDBM_TYPE_UINT32:
+        value->val.u32 = val->val.u32;
+        break;
+    case CDBM_TYPE_INT32:
+        value->val.i32 = val->val.i32;
+        break;
+
+    case CDBM_TYPE_IPV4:
+        value->val.ipv4 = val->val.ipv4;
+        break;
+
+    case CDBM_TYPE_IPV6:
+        value->val.ipv6 = val->val.ipv6;
+        break;
+
+    case CDBM_TYPE_IPADDR:
+        value->val.ip_addr = val->val.ip_addr;
+        break;
+
+    case CDBM_TYPE_MAC:
+        memcpy(value->val.mac, val->val.mac, MAC_STRING_LENGTH);
+        break;
+
+    case CDBM_TYPE_HEX:
+    case CDBM_TYPE_BOOL:
+    case CDBM_TYPE_ENUM_HASH:
+    case CDBM_TYPE_BUF:
+        printf("cdbm_val_duplicate: value type (%d)hex not support yet\n", val->type);
+        break;
+
+    case CDBM_TYPE_STRING:
+    case CDBM_TYPE_STR_WORD:
+    case CDBM_TYPE_KEYPATH:
+        len = strlen(val->val.str)+1;
+        value->val.str = cdbm_malloc(len);
+        strncpy(value->val.str, val->val.str, len);
+        break;
+    default:
+        return NULL;
+    }
+
+    return value;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 /******************************************************************************
@@ -159,6 +433,9 @@ T_global_rc cdbm_uint32_validate(const T_cdbm_dm_type *type, const T_cdbm_value 
 {
     if (val->type != CDBM_TYPE_UINT32)
         return RC_CDBM_INVALID_TYPE ;
+
+    if (type == NULL)
+        return RC_OK;
 
     if (type->base_type != CDBM_TYPE_UINT32)
         return RC_CDBM_INVALID_TYPE ;
@@ -216,6 +493,9 @@ T_global_rc cdbm_int32_validate(const T_cdbm_dm_type *type, const T_cdbm_value *
 {
     if (val->type != CDBM_TYPE_INT32)
         return RC_CDBM_INVALID_TYPE ;
+
+    if (type == NULL)
+        return RC_OK;
 
     if (type->base_type != CDBM_TYPE_INT32)
         return RC_CDBM_INVALID_TYPE ;
@@ -381,71 +661,166 @@ T_global_rc cdbm_ipng_validate(const T_cdbm_dm_type *type, const T_cdbm_value *v
 
 
 
+
+
+
+/******************************************************************************
+ *  the following is types for "string"
+ *****************************************************************************/
+static bool cdbm_str_val_eq(const T_cdbm_value *v1, const T_cdbm_value *v2)
+{
+    if ((v1->type != CDBM_TYPE_STRING) || (v2->type != CDBM_TYPE_STRING))
+        return false;
+
+    return (strcmp(v1->val.str, v2->val.str) == 0);
+}
+
+static T_global_rc cdbm_valstr_to_str(const T_cdbm_value *val, char *buf, uint32 len)
+{
+    uint32 str_len;
+    AAT_STD_ASSERT(buf != NULL);
+
+    str_len = strlen(val->val.str);
+    if (str_len < len-1) {
+        memcpy(buf, val->val.str, str_len+1); // +1 because include terminal '\0'
+    } else {
+        memcpy(buf, val->val.str, len-1); // +1 because include terminal '\0'
+        buf[len-1] = '\0';
+    }
+
+    return RC_OK;
+}
+
+static T_global_rc cdbm_str_to_valstr(const T_cdbm_dm_type *type, const char *str, T_cdbm_value *val)
+{
+    uint32 str_len;
+    T_global_rc ret_code;
+
+    if (val->val.str != NULL) {
+        cdbm_free(val->val.str);
+        val->val.str = NULL;
+    }
+
+    str_len = strlen(str);
+    val->val.str = cdbm_malloc(str_len+1); // need termnial '\0'
+    memcpy(val->val.str, str, str_len+1);
+    val->type = CDBM_TYPE_STRING;
+
+    ret_code = cdbm_str_validate(type, val);
+    CDBM_RET_IF_FAIL(ret_code);
+
+    return RC_OK;
+}
+
+
+
+static T_global_rc cdbm_str_validate(const T_cdbm_dm_type *type, const T_cdbm_value *val)
+{
+    uint32 str_len;
+    if (val->type != CDBM_TYPE_STRING)
+        return RC_CDBM_INVALID_TYPE ;
+
+    if (type == NULL)
+        return RC_OK;
+
+    if (type->base_type != CDBM_TYPE_STRING)
+        return RC_CDBM_VAL_INVALID_TYPE ;
+
+    str_len = strlen(val->val.str);
+    if (!cdbm_val_int32_in_range(str_len, type->type.t_string.lengh))
+        return RC_CDBM_VAL_INVALID_RANGE;
+
+    return RC_OK;
+}
+
+
+/******************************************************************************
+ *  the following is types for "string word"
+ *  some of the function are reused from string type except the validation
+ *****************************************************************************/
+static bool cdbm_strword_val_eq(const T_cdbm_value *v1, const T_cdbm_value *v2)
+{
+    if ((v1->type != CDBM_TYPE_STR_WORD) || (v2->type != CDBM_TYPE_STR_WORD))
+        return false;
+
+    return (strcmp(v1->val.str, v2->val.str) == 0);
+}
+
+
+static T_global_rc cdbm_str_to_strword(const T_cdbm_dm_type *type, const char *str, T_cdbm_value *val)
+{
+    uint32 str_len;
+    T_global_rc ret_code;
+
+    if (val->val.str != NULL) {
+        cdbm_free(val->val.str);
+        val->val.str = NULL;
+    }
+
+    str_len = strlen(str);
+    val->val.str = cdbm_malloc(str_len+1); // need termnial '\0'
+    memcpy(val->val.str, str, str_len+1);
+    val->type = CDBM_TYPE_STR_WORD;
+
+    ret_code = cdbm_strword_validate(type, val);
+    CDBM_RET_IF_FAIL(ret_code);
+
+    return RC_OK;
+}
+
+
+
+static T_global_rc cdbm_strword_validate(const T_cdbm_dm_type *type, const T_cdbm_value *val)
+{
+    uint32 str_len=0;
+    const char *pos = val->val.str;
+
+    if (val->type != CDBM_TYPE_STRING)
+        return RC_CDBM_INVALID_TYPE ;
+
+    while (*pos) {
+        if (isspace(*pos))
+            return RC_CDBM_VAL_SPACE_IN_STRWORD;
+        pos ++;
+        str_len++;
+    }
+
+    if (type != NULL) {
+        if (type->base_type != CDBM_TYPE_STRING)
+            return RC_CDBM_VAL_INVALID_TYPE ;
+
+        if (!cdbm_val_int32_in_range(str_len, type->type.t_string.lengh))
+            return RC_CDBM_VAL_INVALID_RANGE;
+    }
+
+    return RC_OK;
+}
+
+
 /******************************************************************************
  *  the following is types for "key path"
  *****************************************************************************/
+/*
+#define CDBM_MAX_PATTERN_COUNT  5
+typedef struct T_cdbm_type_string {
+    const char* lengh;
+    uint32 pattern_count;
+    const char* pattern_list[CDBM_MAX_PATTERN_COUNT];
+} T_cdbm_type_string;
 
-bool cdbm_keypath_val_eq(const T_cdbm_value *v1, const T_cdbm_value *v2)
-{
-    if ((v1->type != CDBM_TYPE_KEYPATH) || (v2->type != CDBM_TYPE_KEYPATH))
-        return false;
-
-    return (strcmp(v1->val.str, v2->val.str)==0);
-}
-
-T_global_rc cdbm_str_to_keypath(const T_cdbm_dm_type *type, const char *str, T_cdbm_value *val)
-{
-    uint32 keypath_len;
-    T_global_rc ret_code;
-    char* temp_addr=NULL;
-
-    keypath_len = strlen(str);
-    temp_addr = MemAlloc(keypath_len+1, MEM_LONGTERM, AAT_MOD_CDBM, 0, NULL);
-    if (temp_addr == NULL)
-        return RC_CDBM_NO_MORE_MEMORY;
-
-    memcpy(temp_addr, str, keypath_len+1);  // it will copy both string and terminal '\0'
-
-    val->type = CDBM_TYPE_KEYPATH;
-    val->val.str = temp_addr;
-
-    ret_code = cdbm_keypath_validate(type, val);
-    CDBM_RET_IF_FAIL(ret_code);
-
-    /* NOTE: KEYPATH don't need further validation */
-
-    return RC_OK;
-}
-
-T_global_rc cdbm_keypath_to_str(const T_cdbm_value *val, char *str, uint32 len)
-{
-    uint32 copy_len;
-    if (len <= 1) {
-        return RC_CDBM_STR_NO_SPACE;
-    }
-
-    if (val->type != CDBM_TYPE_KEYPATH)
-        return RC_CDBM_INVALID_VTYPE;
-
-    copy_len = MIN(len-1, strlen(val->val.str));
-    memcpy(str, val->val.str, copy_len);
-    str[copy_len] = '\0';
-
-    return RC_OK;
-}
+typedef struct T_cdbm_dm_type {
+    T_cdbm_dm_typedef_idx type_def_id;
+    T_cdbm_vtype base_type;
+    union _type {
+        T_cdbm_type_int t_int;
+        T_cdbm_type_string t_string;
+        T_cdbm_type_enum  t_enum;
+        T_cdbm_type_empty t_empty;
+    } type;
+} T_cdbm_dm_type;
+*/
 
 
-T_global_rc cdbm_keypath_validate(const T_cdbm_dm_type *type, const T_cdbm_value *val)
-{
-    /* for IP address, no range check is need */
-    if (val->type != CDBM_TYPE_KEYPATH)
-        return RC_CDBM_INVALID_TYPE;
-
-    if (strlen(val->val.str) >= CDBM_MAX_KEYPATH_LEN)
-        return RC_CDBM_KEYPATH_TOO_LONG;
-
-    return RC_OK;
-}
 
 /******************************************************************************
  *  the following is types for "MAC address"

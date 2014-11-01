@@ -5,12 +5,12 @@
 #include "aat-incl.h"
 #include "return_codes.h"
 #include "vunit.h"
-
 #include "gfi-list.h"
 
-#include "cdbm-lib.h"
 #include "cdbm-types.h"
+#include "cdbm-lib.h"
 #include "cdbm-datamodel.h"
+#include "cdbm-database.h"
 #include "cdbm-global-data.h"
 
 
@@ -73,9 +73,12 @@ int main()
     gfi_list_mgr_init(1);
     cdbm_lib_init(1);
 
+    cdbm_db_init(1);
+
     /* init phase 2 */
     gfi_list_mgr_init(2);
     cdbm_lib_init(2);
+    cdbm_db_init(2);
     
     cdbm_dm_attach_data(cdbm_test_dm_node,    cdbm_test_get_dm_node_items(),
                         cdbm_test_cm_typedef, cdbm_test_get_typedef_items());

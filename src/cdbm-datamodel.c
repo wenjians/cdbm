@@ -4,16 +4,18 @@
  *                CDBM configuration model definition
  *****************************************************************************/
 
-#include "aat-incl.h"
-
 #include "uthash.h"
 
+
+#include "aat-incl.h"
+
+
+#include "cdbm-types.h"
 #include "cdbm-lib.h"
 #include "cdbm-event.h"
-#include "cdbm-types.h"
+#include "cdbm-global-data.h"
 #include "cdbm-datamodel.h"
 
-#include "cdbm-global-data.h"
 
 /* TODO init phase, validate the parameter tree
  *      - init, make sure all dm node in tree, and tree node count == array items count
@@ -40,6 +42,10 @@ void cdbm_dm_attach_data(T_cdbm_dm_node *_node,       uint32 node_cnt,
 
 
 
+static inline bool cdbm_dm_node_is_id_valid(T_cdbm_dm_node_idx node_idx)
+{
+    return node_idx != CDBM_CM_INVALID_IDX;
+}
 
 static inline T_cdbm_dm_node* cdbm_dm_get_node_from_id(T_cdbm_dm_node_idx node_idx)
 {
@@ -59,11 +65,6 @@ T_cdbm_dm_node* cdbm_dm_get_node_from_keypath(const char* key_path)
     return dm_node;
 }
 
-
-static inline bool cdbm_dm_node_is_id_valid(T_cdbm_dm_node_idx node_idx)
-{
-    return node_idx != CDBM_CM_INVALID_IDX;
-}
 
 bool cdbm_dm_node_is_root(T_cdbm_dm_node *cm_node) {
     return (cm_node->parent_idx == -1);

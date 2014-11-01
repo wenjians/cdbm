@@ -24,6 +24,10 @@ typedef struct T_cdbm_global_data
     uint32 dm_node_cnt;
     T_cdbm_dm_node *dm_node;
     T_cdbm_dm_node *dm_node_hash;
+
+    /* the following is the global data for running DB */
+    T_cdbm_dbase* running_db;
+
 } T_cdbm_global_data;
 
 extern T_cdbm_global_data g_cdbm_data;

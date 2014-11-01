@@ -11,34 +11,9 @@ typedef int32   T_cdbm_dm_node_idx;
 
 
 
-typedef enum T_cdbm_vtype {
-    CDBM_TYPE_EMPTY         =  0,
-    CDBM_TYPE_UINT32        =  1,
-    CDBM_TYPE_INT32         =  2,
-    CDBM_TYPE_IPV4          =  3,
-    CDBM_TYPE_IPV6          =  4,
-    CDBM_TYPE_IPADDR        =  5,
-    CDBM_TYPE_MAC           =  6,
-    CDBM_TYPE_HEX           =  7,
-    CDBM_TYPE_STRING        =  8,
-    CDBM_TYPE_STR_WORD      =  9,
-    CDBM_TYPE_BOOL          = 10,
-    CDBM_TYPE_ENUM_HASH     = 11,
-    CDBM_TYPE_BUF           = 12,
-    CDBM_TYPE_KEYPATH       = 13,
-    CDBM_TYPE_MAX,                  /* MAX type value definition */
-} T_cdbm_vtype;
 
 
-/* it is definition of CDBM configuration paraemter model */
-typedef enum T_cdbm_node_type
-{
-    CDBM_NODE_TYPE_INVALID      = 0,
-    CDBM_NODE_TYPE_CONTAINER    = 1,
-    CDBM_NODE_TYPE_LIST         = 2,
-    CDBM_NODE_TYPE_LEAF_LIST    = 3,
-    CDBM_NODE_TYPE_LEAF         = 4,
-} T_cdbm_node_type;
+
 
 /* no self-defined data available for container */
 typedef struct T_cdbm_cm_container
@@ -99,53 +74,7 @@ typedef struct T_cdbm_dm_node
 } T_cdbm_dm_node;
 
 
-typedef enum T_cdbm_vtype_category {
-    CDBM_CATEGORY_INT   =1,
-    CDBM_CATEGORY_STR   =2,
-    CDBM_CATEGORY_ENUM  =3,
-    CDBM_CATEGORY_BOOL  =4,
-    CDBM_CATEGORY_IP    =5,
-    // TODO ADD more categories
-}T_cdbm_vtype_category;
 
-typedef struct T_cdbm_type_int {
-    const char* range;
-} T_cdbm_type_int;
-
-#define CDBM_MAX_PATTERN_COUNT  5
-typedef struct T_cdbm_type_string {
-    const char* lengh;
-    uint32 pattern_count;
-    const char* pattern_list[CDBM_MAX_PATTERN_COUNT];
-} T_cdbm_type_string;
-
-typedef struct T_cdbm_type_empty {
-    uint32 reserved;
-} T_cdbm_type_empty;
-
-typedef struct T_cdbm_type_enum_value {
-    const char* keyword;
-    bool value_defined;
-    int32 value;
-} T_cdbm_type_enum_value;
-
-typedef struct T_cdbm_type_enum {
-    uint32 enum_count;
-    T_cdbm_type_enum_value *enum_list;
-} T_cdbm_type_enum;
-
-typedef int32  T_cdbm_dm_typedef_idx;
-
-typedef struct T_cdbm_dm_type {
-    T_cdbm_dm_typedef_idx type_def_id;
-    T_cdbm_vtype base_type;      /* the base builtin type */
-    union _type {
-        T_cdbm_type_int t_int;
-        T_cdbm_type_string t_string;
-        T_cdbm_type_enum  t_enum;
-        T_cdbm_type_empty t_empty;
-    } type;
-} T_cdbm_dm_type;
 
 
 typedef struct T_cdbm_dm_typedef {

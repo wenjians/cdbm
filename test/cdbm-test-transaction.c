@@ -3,11 +3,14 @@
 #include "vunit.h"
 
 #include "cdbm-types.h"
-#include "cdbm-datamodel.h"
 #include "cdbm-lib.h"
+#include "cdbm-datamodel.h"
+#include "cdbm-database.h"
+#include "cdbm-global-data.h"
+
 #include "cdbm-test.h"
 
-#include "cdbm-global-data.h"
+
 
 int cdbm_test_transaction_manage()
 {
@@ -60,6 +63,7 @@ int cdbm_test_transaction_leaf()
     //char *expect;
     T_cdbm_trans_id trans_id;
     T_global_rc ret_cod;
+    T_cdbm_value *kpath=NULL;
     /*
     T_global_IP_ADDR ipv4_addr;
     T_global_IP6_ADDR ipv6_addr;
@@ -76,6 +80,11 @@ int cdbm_test_transaction_leaf()
     // 2. Execute
     ret_cod = cdbm_set_uint32(trans_id, 10, "/test-types/speed-uint");
     VASSERT_EQ(RC_OK, ret_cod);
+
+    ret_cod = cdbm_set_uint32(trans_id, 10, "/ip-realm/test-node/leaf/leaf1");
+    VASSERT_EQ(RC_OK, ret_cod);
+
+
 
     /*
     ret_cod = cdbm_set_string(trans_id, "local", "/test-types/save-mode");
@@ -118,13 +127,48 @@ int cdbm_test_transaction_leaf()
 
     ret_cod = cdbm_set_string(trans_id, "aa:bb:cc:dd:ee:ff", "/test-types/local-mac");
     VASSERT_EQ(RC_OK, ret_cod);
+    */
 
     ret_cod = cdbm_trans_commit(trans_id);
     VASSERT_EQ(RC_OK, ret_cod);
 
+
+    kpath = cdbm_keypath_create("/test-types/speed-int");
+    ret_cod = cdbm_db_del_node_recursive(trans_id->config_dbase, kpath);
+    VASSERT_EQ(RC_CDBM_DB_KPATH_NOT_EXIST, ret_cod);
+    cdbm_val_free(kpath);
+    kpath = NULL;
+
+    //printf("%s:%d: print after delete speed-int", __FUNCTION__, __LINE__);
+    //cdbm_db_print(trans_id->config_dbase);
+
+    //cdbm_db_walk_find(trans_id->config_dbase);
+
+    kpath = cdbm_keypath_create("/ip-realm/test-node/leaf");
+    ret_cod = cdbm_db_del_node_recursive(trans_id->config_dbase, kpath);
+    VASSERT_EQ(RC_CDBM_DB_DEL_NODE_WITH_CHILD, ret_cod);
+    //cdbm_db_print(trans_id->config_dbase);
+    cdbm_val_free(kpath);
+    kpath = NULL;
+
+    kpath = cdbm_keypath_create("/ip-realm/test-node/leaf/leaf1");
+    ret_cod = cdbm_db_del_node_recursive(trans_id->config_dbase, kpath);
+    VASSERT_EQ(RC_OK, ret_cod);
+    //cdbm_db_print(trans_id->config_dbase);
+    cdbm_val_free(kpath);
+    kpath = NULL;
+
+    kpath = cdbm_keypath_create("/test-types/speed-uint");
+    ret_cod = cdbm_db_del_node_recursive(trans_id->config_dbase, kpath);
+    //cdbm_db_print(trans_id->config_dbase);
+    VASSERT_EQ(RC_OK, ret_cod);
+    cdbm_val_free(kpath);
+    kpath = NULL;
+
     ret_cod = cdbm_trans_get_result(trans_id);
     VASSERT_EQ(RC_OK, ret_cod);
-    */
+
+    //cdbm_db_print(trans_id->config_dbase);
 
     // 3. Verify
 #if 0

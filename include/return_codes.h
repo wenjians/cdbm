@@ -9,15 +9,28 @@ typedef enum T_global_rc {
     RC_INVALID_REQUEST            = -2,
     RC_OUT_OF_RANGE               = -6,
 
-    /* the follwoing is the error code for CDBM */
+    /* the following is the error code for overall CDBM */
+    RC_CDBM_NO_MORE_MEMORY     = -10000,
 
     /* transaction manager related */
-    RC_CDBM_TRANS_IS_NULL      = -10000,
-    RC_CDBM_TRANS_NOT_IN_LIST  = -10001,
+    RC_CDBM_TRANS_IS_NULL      = -10100,
+    RC_CDBM_TRANS_NOT_IN_LIST  = -10101,
 
     /* data model related */
     RC_CDBM_DM_KEYPATH_EXIST   = -20000,
     RC_CDBM_DM_ADD_KEYPATH_FAIL= -20001,
+
+    /* data base related */
+    RC_CDBM_DB_KPATH_NOT_EXIST    =-20050,
+    RC_CDBM_DB_DEL_NODE_WITH_CHILD=-20051,
+    RC_CDBM_DB_DEL_ROOT           =-20052,
+
+    /* CDBM value related error */
+    RC_CDBM_VAL_INVALID_TYPE   = -21001,
+    RC_CDBM_VAL_TYPE_NOT_MATCH = -21002,
+    RC_CDBM_VAL_BUF_TOO_SHORT  = -21003,
+    RC_CDBM_VAL_INVALID_RANGE  = -21004,
+    RC_CDBM_VAL_SPACE_IN_STRWORD = -21005,
 
     RC_CDBM_NAME_SPACE_INVALID = -11001,
     RC_CDBM_INVALID_IPV4_ADDR  = -11002,
@@ -36,7 +49,7 @@ typedef enum T_global_rc {
 
     RC_CDBM_SYNTAX_ERROR       = -11012,
     RC_CDBM_VALIDAT_ERROR      = -11013,
-    RC_CDBM_NO_MORE_MEMORY     = -11014,
+    //RC_CDBM_NO_MORE_MEMORY     = -11014,
     RC_CDBM_INVALID_VTYPE      = -11015,
     RC_CDBM_KEYPATH_TOO_LONG   = -11016,
 
